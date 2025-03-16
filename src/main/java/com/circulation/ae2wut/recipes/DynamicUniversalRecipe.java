@@ -58,7 +58,6 @@ public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForge
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack terminal = ItemStack.EMPTY;
 
-        // 查找终端物品
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem() == inputTerminal.getItem()) {
@@ -69,7 +68,6 @@ public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForge
 
         if (terminal.isEmpty()) return ItemStack.EMPTY;
 
-        // 处理 NBT
         NBTTagCompound tag = terminal.getTagCompound();
         if (tag == null) {
             tag = new NBTTagCompound();

@@ -4,11 +4,13 @@ import appeng.api.AEApi;
 import appeng.api.definitions.IDefinitions;
 import appeng.api.definitions.IItems;
 import appeng.util.Platform;
+import com.blakebr0.extendedcrafting.crafting.table.TableRecipeManager;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import com._0xc4de.ae2exttable.items.ItemRegistry;
@@ -40,6 +42,7 @@ public class AllWUTRecipe {
         map.put(1, AEItems.wirelessCraftingTerminal().maybeStack(1).get());
         map.put(2, AEItems.wirelessFluidTerminal().maybeStack(1).get());
         map.put(3, AEItems.wirelessPatternTerminal().maybeStack(1).get());
+        map.put(10, AEItems.wirelessInterfaceTerminal().maybeStack(1).get());
 
         if (Loader.isModLoaded("ae2fc")) {
             addAE2FC(map);
@@ -105,6 +108,15 @@ public class AllWUTRecipe {
                     ItemWirelessALL,
                     inputs.toArray(new Ingredient[0])
             );
+        } else if (Loader.isModLoaded("extendedcrafting")){
+            extendedcraftingRecipe(inputs,ItemWirelessALL);
         }
+    }
+
+    @Optional.Method(modid = "extendedcrafting")
+    public static void extendedcraftingRecipe(List<Ingredient> input,ItemStack outpput){
+        NonNullList<Ingredient> inputs = NonNullList.create();
+        inputs.addAll(input);
+        TableRecipeManager.getInstance().addShapeless(outpput,inputs);
     }
 }

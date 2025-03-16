@@ -56,7 +56,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public static final int[] allMode = getAllMode();
 
     private static int[] getAllMode() {
-        List<Integer> modes = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
+        List<Integer> modes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 10));
 
         if (Loader.isModLoaded("ae2fc")) {
             modes.add(4);
@@ -109,7 +109,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
                 case 0:
                     registry.openWirelessTerminalGui(player.getHeldItem(hand), w, player);
                     break;
-                case 1, 2, 3:
+                case 1, 2, 3, 10:
                     if (list.contains(mode)) {
                         registry.openWirelessTerminalGui(player.getHeldItem(hand), w, player);
                         break;
@@ -226,7 +226,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public void nbtChange(ItemStack item, int mode) {
         item.getTagCompound().setInteger("mode", mode);
         item.getTagCompound().setInteger("craft", 1);
-        if (mode != 0 && mode != 2 && mode != 5) {
+        if (mode != 0 && mode != 2 && mode != 5 && mode != 10) {
             List<Integer> list = Arrays.stream(item.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
             if (list.contains(mode)) {
                 NBTTagList cache = item.getTagCompound().getCompoundTag("cache").getTagList(String.valueOf(mode), 10);
@@ -267,7 +267,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public void nbtChangeB(ItemStack item) {
         int mode = item.getTagCompound().getInteger("mode");
         item.getTagCompound().setInteger("craft", 0);
-        if (mode != 0 && mode != 2 && mode != 5) {
+        if (mode != 0 && mode != 2 && mode != 5 && mode != 10) {
             List<Integer> list = Arrays.stream(item.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
             if (list.contains(mode)) {
                 item.getTagCompound().setInteger("mode", mode);
@@ -340,6 +340,8 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
                 return getString("item.ae2exttable.wireless_elite_crafting_terminal.name");
             case 9:
                 return getString("item.ae2exttable.wireless_ultimate_crafting_terminal.name");
+            case 10:
+                return getString("item.appliedenergistics2.wireless_interface_terminal.name");
             default:
                 return "";
         }
@@ -390,6 +392,8 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
                     return GuiBridge.GUI_WIRELESS_FLUID_TERMINAL;
                 case 3:
                     return GuiBridge.GUI_WIRELESS_PATTERN_TERMINAL;
+                case 10:
+                    return GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL;
             }
         }
         return GuiBridge.GUI_WIRELESS_TERM;

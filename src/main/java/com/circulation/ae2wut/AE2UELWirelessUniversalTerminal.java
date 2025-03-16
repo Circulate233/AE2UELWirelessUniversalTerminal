@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "ae2wut", name = Tags.MOD_NAME, version = Tags.VERSION,
         dependencies = "required:mixinbooter@[8.0,);" +
-                       "required:appliedenergistics2@[v0.56.5,);"
+                       "required:appliedenergistics2@[v0.56.7,);"
 )
 public class AE2UELWirelessUniversalTerminal {
 

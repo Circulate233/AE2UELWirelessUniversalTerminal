@@ -60,9 +60,16 @@
     },
     {
       "predicate": {
+        "mode": 10
+      },
+      "model": "appliedenergistics2:item/wireless_interface_terminal"
+    },
+    {
+      "predicate": {
         "mode": 114514
       },
       "model": "ae2wut:item/wireless_nova_terminal"
     }
+
   ]
 }
