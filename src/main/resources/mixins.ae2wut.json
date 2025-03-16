@@ -1,12 +1,13 @@
 {
-	"package": "com.circulation.ae2wut.mixin.ae2",
-	"refmap": "mixins.ae2wut.refmap.json",
-	"target": "@env(DEFAULT)",
-	"minVersion": "0.8",
-	"compatibilityLevel": "JAVA_8",
-	"client": [
-	],
-	"mixins": [
-		"MixinPacketTerminalUse"
-	]
+  "package": "com.circulation.ae2wut.mixin.ae2",
+  "refmap": "mixins.ae2wut.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+  ],
+  "mixins": [
+    "MixinPacketTerminalUse",
+    "MixinTerminal"
+    ]
 }
