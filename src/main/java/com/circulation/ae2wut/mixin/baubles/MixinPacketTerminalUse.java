@@ -56,6 +56,8 @@ public abstract class MixinPacketTerminalUse extends AppEngPacket {
                 return 3;
             case "WIRELESS_FLUID_TERMINAL" :
                 return 2;
+            case "WIRELESS_INTERFACE_TERMINAL" :
+                return 10;
             default:return 0;
         }
     }
