@@ -201,13 +201,13 @@ dependencies {
     compileOnlyApi("org.jetbrains:annotations:24.1.0")
     annotationProcessor("org.jetbrains:annotations:24.1.0")
 
-    implementation rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5504001")
     implementation rfg.deobf("curse.maven:ae2-extended-life-570458:6302098")
     compileOnly rfg.deobf("curse.maven:MekanismEnergistics-1027681:5775101")
     implementation rfg.deobf("curse.maven:baubles-227083:2518667")
     compileOnly rfg.deobf("curse.maven:extended-crafting-nomifactory-edition-398267:5778512")
     compileOnly rfg.deobf('_0xc4de:ae2exttable-dev')
     implementation rfg.deobf("curse.maven:had-enough-items-557549:4810661")
+    implementation rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5751930")
 }
 
 apply from: 'gradle/scripts/dependencies.gradle'

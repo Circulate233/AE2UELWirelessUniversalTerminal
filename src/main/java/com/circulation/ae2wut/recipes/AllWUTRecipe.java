@@ -4,24 +4,28 @@ import appeng.api.AEApi;
 import appeng.api.definitions.IDefinitions;
 import appeng.api.definitions.IItems;
 import appeng.util.Platform;
+import com._0xc4de.ae2exttable.items.ItemRegistry;
 import com.blakebr0.extendedcrafting.crafting.table.TableRecipeManager;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.glodblock.github.loader.FCItems;
+import com.mekeng.github.common.ItemAndBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
-import com._0xc4de.ae2exttable.items.ItemRegistry;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.circulation.ae2wut.item.ItemWirelessUniversalTerminal.*;
-import com.glodblock.github.loader.FCItems;
-import com.mekeng.github.common.ItemAndBlocks;
+import static com.circulation.ae2wut.item.ItemWirelessUniversalTerminal.NAME;
+import static com.circulation.ae2wut.item.ItemWirelessUniversalTerminal.allMode;
 
 public class AllWUTRecipe {
 
