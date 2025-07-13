@@ -11,6 +11,7 @@
     "MixinCraftingCPUStatusTWO",
     "MixinGuiCraftAmount",
     "MixinGuiCraftConfirm",
+    "MixinPacketOpenWirelessGui",
     "MixinWirelessTerminalGuiObjectTwo"
   ]
 }

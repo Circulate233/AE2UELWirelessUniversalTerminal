@@ -4,6 +4,7 @@ import appeng.api.parts.IPart;
 import appeng.container.AEBaseContainer;
 import appeng.container.implementations.ContainerCraftConfirm;
 import appeng.container.interfaces.IInventorySlotAware;
+import appeng.me.GridAccessException;
 import com._0xc4de.ae2exttable.client.gui.PartGuiHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,7 +31,11 @@ public abstract class MixinContainerCraftConfirm extends AEBaseContainer {
                     case 6, 7, 8, 9: {
                         IInventorySlotAware i = ((IInventorySlotAware) this.obj);
                         EntityPlayer player = this.getInventoryPlayer().player;
-                        PartGuiHandler.openWirelessTerminalGui(this.obj.getItemStack(), i.getInventorySlot(), i.isBaubleSlot(), player.world, player, ItemWirelessUniversalTerminal.getGuiType(this.obj.getItemStack()));
+                        try {
+                            PartGuiHandler.openWirelessTerminalGui(this.obj.getItemStack(), i.getInventorySlot(), i.isBaubleSlot(), player.world, player, ItemWirelessUniversalTerminal.getGuiType(this.obj.getItemStack()));
+                        } catch (GridAccessException ignored) {
+
+                        }
                         ci.cancel();
                     }
                 }

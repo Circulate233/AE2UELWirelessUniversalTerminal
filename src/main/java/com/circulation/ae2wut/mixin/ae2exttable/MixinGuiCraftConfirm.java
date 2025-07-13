@@ -4,7 +4,6 @@ import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.implementations.GuiCraftConfirm;
 import appeng.core.localization.GuiText;
-import appeng.core.sync.GuiBridge;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com._0xc4de.ae2exttable.client.gui.AE2ExtendedGUIs;
 import com._0xc4de.ae2exttable.network.ExtendedTerminalNetworkHandler;
@@ -20,14 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = {GuiCraftConfirm.class}, remap = false)
+@Mixin(value = GuiCraftConfirm.class, remap = false)
 public abstract class MixinGuiCraftConfirm extends AEBaseGui {
-
-    @Shadow
-    private GuiButton start;
-
-    @Shadow
-    private GuiBridge OriginalGui;
 
     @Shadow
     private GuiButton cancel;
@@ -68,7 +61,4 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
             }
         }
     }
-
-    @Shadow
-    public abstract void drawFG(int i, int i1, int i2, int i3);
 }

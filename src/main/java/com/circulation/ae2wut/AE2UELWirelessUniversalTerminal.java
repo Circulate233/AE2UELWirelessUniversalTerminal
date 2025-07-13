@@ -16,8 +16,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "ae2wut", name = Tags.MOD_NAME, version = Tags.VERSION,
-        dependencies = "required:mixinbooter@[8.0,);" +
-                       "required:appliedenergistics2@[v0.56.7,);"
+        dependencies = "required-after:mixinbooter@[8.0,);" +
+                "required-after:appliedenergistics2@[v0.56.7,);" +
+                "after:ae2exttable@[v1.0.5,);"
 )
 public class AE2UELWirelessUniversalTerminal {
 
@@ -42,6 +43,8 @@ public class AE2UELWirelessUniversalTerminal {
 
         NET_CHANNEL.registerMessage(UpdateItemModeMessage.Handler.class,UpdateItemModeMessage.class, start++, Side.SERVER);
         NET_CHANNEL.registerMessage(WirelessTerminalRefresh.Handler.class, WirelessTerminalRefresh.class, start++, Side.SERVER);
+
+        NET_CHANNEL.registerMessage(UpdateItemModeMessage.Handler.class,UpdateItemModeMessage.class, start++, Side.CLIENT);
 
         proxy.preInit();
     }

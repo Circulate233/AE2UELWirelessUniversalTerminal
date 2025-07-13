@@ -18,8 +18,6 @@ public class WUTLateMixinLoader implements ILateMixinLoader {
     static {
         addMixinCFG("mixins.ae2wut.json");
         addModdedMixinCFG("mixins.ae2wut.ae2fc.json",                 "ae2fc");
-        addModdedMixinCFG("mixins.ae2wut.baubles.json",                 "baubles");
-        addModdedMixinCFG("mixins.ae2wut.ae2fcbaubles.json","ae2fc","baubles");
         addModdedMixinCFG("mixins.ae2wut.ae2exttable.json",                 "ae2exttable");
     }
 

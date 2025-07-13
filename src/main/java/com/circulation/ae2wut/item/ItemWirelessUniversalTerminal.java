@@ -41,10 +41,7 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
@@ -54,6 +51,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public static ItemWirelessUniversalTerminal INSTANCE = new ItemWirelessUniversalTerminal();
 
     public static final int[] allMode = getAllMode();
+    public static final Set<Integer> allModeSet = new HashSet<>();
 
     private static int[] getAllMode() {
         List<Integer> modes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 10));
@@ -97,12 +95,6 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public ActionResult<ItemStack> onItemRightClick(World w, EntityPlayer player, EnumHand hand) {
         ItemStack item = player.getHeldItem(hand);
         if (item.hasTagCompound()) {
-            List<Integer> list;
-            if (item.getTagCompound().hasKey("modes")) {
-                list = Arrays.stream(item.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
-            } else {
-                list = Arrays.asList(0);
-            }
             int mode = item.getTagCompound().getInteger("mode");
             nbtChange(player, mode, hand);
             switch (mode) {
@@ -110,28 +102,28 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
                     registry.openWirelessTerminalGui(player.getHeldItem(hand), w, player);
                     break;
                 case 1, 2, 3, 10:
-                    if (list.contains(mode)) {
+                    if (hasMode(item,mode)) {
                         registry.openWirelessTerminalGui(player.getHeldItem(hand), w, player);
                         break;
                     }
                     break;
                 case 4:
                     if (Loader.isModLoaded("ae2fc")) {
-                        if (list.contains(mode)) {
+                        if (hasMode(item,mode)) {
                             Util.openWirelessTerminal(player.getHeldItem(hand), hand == EnumHand.MAIN_HAND ? player.inventory.currentItem : 40, false, w, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
                         }
                     }
                     break;
                 case 5:
                     if (Loader.isModLoaded("mekeng")) {
-                        if (list.contains(mode)) {
+                        if (hasMode(item,mode)) {
                             openWirelessTerminalGui(player.getHeldItem(hand), player, null, mode);
                         }
                     }
                     break;
                 case 6, 7, 8, 9:
                     if (Loader.isModLoaded("ae2exttable")) {
-                        if (list.contains(mode)) {
+                        if (hasMode(item,mode)) {
                             openWirelessTerminalGui(player.getHeldItem(hand), player, getGui(mode), mode);
                         }
                     }
@@ -228,7 +220,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         item.getTagCompound().setInteger("craft", 1);
         if (mode != 0 && mode != 2 && mode != 5 && mode != 10) {
             List<Integer> list = Arrays.stream(item.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
-            if (list.contains(mode)) {
+            if (hasMode(item,mode)) {
                 NBTTagList cache = item.getTagCompound().getCompoundTag("cache").getTagList(String.valueOf(mode), 10);
                 if (cache.tagCount() != 0) {
                     if (mode < 6) {
@@ -264,32 +256,30 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         }
     }
 
+    private final Set<Integer> secure = new HashSet<>(){{
+        add(0);
+        add(2);
+        add(5);
+        add(10);
+    }};
+
     public void nbtChangeB(ItemStack item) {
         int mode = item.getTagCompound().getInteger("mode");
         item.getTagCompound().setInteger("craft", 0);
-        if (mode != 0 && mode != 2 && mode != 5 && mode != 10) {
-            List<Integer> list = Arrays.stream(item.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
-            if (list.contains(mode)) {
+        if (!secure.contains(mode)) {
+            if (hasMode(item,mode)) {
                 item.getTagCompound().setInteger("mode", mode);
                 NBTTagList items = item.getTagCompound().getCompoundTag("craftingGrid").getTagList("Items", 10);
                 if (Loader.isModLoaded("ae2exttable") && item.getTagCompound().hasKey("crafting")) {
                     int ii = 0;
-                    int iii = 0;
+                    int iii = switch (mode) {
+                        case 6 -> 9;
+                        case 7 -> 25;
+                        case 8 -> 49;
+                        case 9 -> 81;
+                        default -> 0;
+                    };
                     int iiii = 0;
-                    switch (mode) {
-                        case 6:
-                            iii = 9;
-                            break;
-                        case 7:
-                            iii = 25;
-                            break;
-                        case 8:
-                            iii = 49;
-                            break;
-                        case 9:
-                            iii = 81;
-                            break;
-                    }
                     NBTTagList nbtList = new NBTTagList();
                     Iterator<NBTBase> iterator = item.getTagCompound().getTagList("crafting", 10).iterator();
                     while (iterator.hasNext() && ii < iii) {
@@ -421,16 +411,25 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
 
     @Optional.Method(modid = "ae2exttable")
     public static AE2ExtendedGUIs getGui(int value) {
-        switch (value) {
-            case 6:
-                return AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
-            case 7:
-                return AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
-            case 8:
-                return AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
-            case 9:
-                return AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
+        return switch (value) {
+            case 6 -> AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
+            case 7 -> AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
+            case 8 -> AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
+            case 9 -> AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
+            default -> null;
+        };
+    }
+
+    public boolean hasMode(ItemStack t,int mode){
+        if (allModeSet.isEmpty()){
+            for (int i : allMode) {
+                allModeSet.add(i);
+            }
         }
-        return null;
+        if (!allModeSet.contains(mode) || !t.hasTagCompound())return false;
+        for (int m : t.getTagCompound().getIntArray("modes")){
+            if (m == mode)return true;
+        }
+        return false;
     }
 }

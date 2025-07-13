@@ -83,7 +83,7 @@ public class WirelessUniversalTerminalHandler {
 
                         stack.getTagCompound().setInteger("mode", newVal);
                         mc.player.sendStatusMessage(new TextComponentString(stack.getDisplayName()),true);
-                        AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new UpdateItemModeMessage(stack, newVal));
+                        AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new UpdateItemModeMessage(mc.player.inventory.currentItem,(byte) newVal,false));
 
                         event.setCanceled(true);
                     }
