@@ -11,6 +11,8 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class UpdateItemModeMessage implements IMessage {
     private int slot;
@@ -57,7 +59,7 @@ public class UpdateItemModeMessage implements IMessage {
         public IMessage onMessage(UpdateItemModeMessage message, MessageContext ctx) {
             EntityPlayer player = switch (ctx.side){
                 case SERVER -> ctx.getServerHandler().player;
-                case CLIENT -> Minecraft.getMinecraft().player;
+                case CLIENT -> getClientPlayer();
             };
 
             ItemStack stack = ItemStack.EMPTY;
@@ -76,6 +78,11 @@ public class UpdateItemModeMessage implements IMessage {
         @Optional.Method(modid = "baubles")
         private ItemStack getStackInBaubleSlot(EntityPlayer player,int slot){
             return slot >= 0 && slot < BaublesApi.getBaublesHandler(player).getSlots() ? BaublesApi.getBaublesHandler(player).getStackInSlot(slot) : ItemStack.EMPTY;
+        }
+
+        @SideOnly(Side.CLIENT)
+        private EntityPlayer getClientPlayer(){
+            return Minecraft.getMinecraft().player;
         }
     }
 }
