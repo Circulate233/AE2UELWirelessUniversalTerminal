@@ -30,7 +30,7 @@ public class MixinGuiItemAmountChange extends GuiCraftAmount {
         Object te = ((AEBaseContainer)this.inventorySlots).getTarget();
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
-            if (tool.getItem() == ItemWirelessUniversalTerminal.INSTANCE) {
+            if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
                 this.originalGui = GuiType.WIRELESS_FLUID_PATTERN_TERMINAL;
             }
         }

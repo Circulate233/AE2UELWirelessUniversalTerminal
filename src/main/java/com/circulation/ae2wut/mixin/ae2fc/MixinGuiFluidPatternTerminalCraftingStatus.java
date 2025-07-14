@@ -8,6 +8,7 @@ import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.glodblock.github.client.GuiFluidPatternTerminalCraftingStatus;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
+import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,12 +34,22 @@ public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatu
         super(inventoryPlayer, te);
     }
 
+    @Inject(method = "<init>",at = @At("TAIL"))
+    public void onInit(InventoryPlayer inventoryPlayer, ITerminalHost te, CallbackInfo ci){
+        if (te instanceof WirelessTerminalGuiObject) {
+            ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
+            if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
+                Ae2ReflectClient.setIconItem(this, tool);
+            }
+        }
+    }
+
     @Inject(method="actionPerformed", at = @At(value= "HEAD"),remap = true)
     public void onActionPerformed(GuiButton btn, CallbackInfo ci) {
         if (btn == this.originalGuiBtn) {
             if (this.part instanceof WirelessTerminalGuiObject t) {
                 ItemStack tool = t.getItemStack();
-                if (tool.getItem() == ItemWirelessUniversalTerminal.INSTANCE) {
+                if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
                     InventoryHandler.switchGui(GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
                 }
             }

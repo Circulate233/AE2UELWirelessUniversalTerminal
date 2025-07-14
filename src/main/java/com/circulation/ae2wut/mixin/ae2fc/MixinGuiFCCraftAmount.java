@@ -34,7 +34,7 @@ public class MixinGuiFCCraftAmount extends GuiCraftAmount {
         ItemStack icon = ItemStack.EMPTY;
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
-            if (tool.getItem() == ItemWirelessUniversalTerminal.INSTANCE) {
+            if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
                 icon = tool;
                 this.originGui = GuiType.WIRELESS_FLUID_PATTERN_TERMINAL;
             }

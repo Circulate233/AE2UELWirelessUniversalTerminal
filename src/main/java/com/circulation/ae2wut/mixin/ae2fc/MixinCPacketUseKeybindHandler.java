@@ -37,7 +37,7 @@ public class MixinCPacketUseKeybindHandler {
                 if (stackInSlot.getTagCompound().hasKey("modes")) {
                     list = Arrays.stream(stackInSlot.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
                 }
-                if (stackInSlot.getItem() == ItemWirelessUniversalTerminal.INSTANCE && list != null && list.contains(4)) {
+                if (stackInSlot.getItem() instanceof ItemWirelessUniversalTerminal && list != null && list.contains(4)) {
                     ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stackInSlot);
                     ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stackInSlot, 4);
                     Util.openWirelessTerminal(stackInSlot, i, false, player.world, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
@@ -64,7 +64,7 @@ public class MixinCPacketUseKeybindHandler {
     private static void aE2UELWirelessUniversalTerminal$d(EntityPlayer player, CallbackInfo ci){
         for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
             ItemStack stackInSlot = BaublesApi.getBaublesHandler(player).getStackInSlot(i);
-            if (stackInSlot.getItem() == ItemWirelessUniversalTerminal.INSTANCE && stackInSlot.getTagCompound() != null) {
+            if (stackInSlot.getItem() instanceof ItemWirelessUniversalTerminal && stackInSlot.getTagCompound() != null) {
                 List<Integer> list = null;
                 if (stackInSlot.getTagCompound().hasKey("modes")) {
                     list = Arrays.stream(stackInSlot.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());

@@ -29,7 +29,7 @@ public class MixinGuiFCCraftConfirm extends GuiCraftConfirm {
         Object te = ((AEBaseContainer)this.inventorySlots).getTarget();
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
-            if (tool.getItem() == ItemWirelessUniversalTerminal.INSTANCE) {
+            if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
                 this.originGui = GuiType.WIRELESS_FLUID_PATTERN_TERMINAL;
             }
         }

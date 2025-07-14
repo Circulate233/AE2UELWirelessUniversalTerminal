@@ -12,6 +12,7 @@
   ],
   "mixins": [
     "MixinContainerCraftConfirm",
+    "MixinCoreModHooks",
     "MixinCPacketUseKeybindHandler"
   ]
 }
