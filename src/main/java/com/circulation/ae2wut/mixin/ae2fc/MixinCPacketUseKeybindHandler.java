@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Mixin(value = CPacketUseKeybind.Handler.class, remap = false)
 public class MixinCPacketUseKeybindHandler {
 
-    @Inject(method = "onMessage(Lcom/glodblock/github/network/CPacketUseKeybind;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At(value= "HEAD"))
+    @Inject(method = "onMessage(Lcom/glodblock/github/network/CPacketUseKeybind;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At(value= "HEAD"), cancellable = true)
     public void onMessageMixin(CPacketUseKeybind message, MessageContext ctx, CallbackInfoReturnable<IMessage> cir) {
         final EntityPlayerMP player = ctx.getServerHandler().player;
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
@@ -38,9 +38,13 @@ public class MixinCPacketUseKeybindHandler {
                     list = Arrays.stream(stackInSlot.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
                 }
                 if (stackInSlot.getItem() instanceof ItemWirelessUniversalTerminal && list != null && list.contains(4)) {
-                    ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stackInSlot);
-                    ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stackInSlot, 4);
-                    Util.openWirelessTerminal(stackInSlot, i, false, player.world, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
+                    final int finalI = i;
+                    player.getServer().addScheduledTask(() -> {
+                        ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stackInSlot);
+                        ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stackInSlot, 4);
+                        Util.openWirelessTerminal(stackInSlot, finalI, false, player.world, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
+                    });
+                    cir.setReturnValue(null);
                     return;
                 }
             }
@@ -70,9 +74,12 @@ public class MixinCPacketUseKeybindHandler {
                     list = Arrays.stream(stackInSlot.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
                 }
                 if (list != null && list.contains(4)) {
-                    ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stackInSlot);
-                    ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stackInSlot, 4);
-                    Util.openWirelessTerminal(stackInSlot, i, true, player.world, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
+                    final int finalI = i;
+                    player.getServer().addScheduledTask(() -> {
+                        ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stackInSlot);
+                        ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stackInSlot, 4);
+                        player.getServer().addScheduledTask(() -> Util.openWirelessTerminal(stackInSlot, finalI, true, player.world, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL));
+                    });
                     ci.cancel();
                     return;
                 }
