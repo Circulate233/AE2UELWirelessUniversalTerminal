@@ -2,7 +2,9 @@ package com.circulation.ae2wut.proxy;
 
 import appeng.api.AEApi;
 import appeng.api.config.Upgrades;
+import appeng.api.util.AEPartLocation;
 import appeng.container.AEBaseContainer;
+import appeng.container.ContainerOpenContext;
 import baubles.api.BaublesApi;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.handler.WirelessUniversalTerminalHandler;
@@ -62,7 +64,17 @@ public class CommonProxy implements IGuiHandler {
         if (!terminal.isEmpty()){
             if (terminal.getItem() instanceof ItemWirelessUniversalTerminal wut){
                 if (wut.hasMode(terminal,mode)){
-                    return ContainerMap.get(mode).get(terminal,player,x,y);
+                    var bc = ContainerMap.get(mode).get(terminal,player,x,y);
+                    if (bc != null) {
+                        var containerOpenContext = new ContainerOpenContext(terminal);
+                        containerOpenContext.setWorld(world);
+                        containerOpenContext.setX(x);
+                        containerOpenContext.setY(y);
+                        containerOpenContext.setZ(z);
+                        containerOpenContext.setSide(AEPartLocation.INTERNAL);
+                        bc.setOpenContext(containerOpenContext);
+                    }
+                    return bc;
                 }
             }
         }
