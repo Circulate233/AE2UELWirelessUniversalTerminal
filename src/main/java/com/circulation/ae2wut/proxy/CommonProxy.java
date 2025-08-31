@@ -71,7 +71,7 @@ public class CommonProxy implements IGuiHandler {
                         containerOpenContext.setX(x);
                         containerOpenContext.setY(y);
                         containerOpenContext.setZ(z);
-                        containerOpenContext.setSide(AEPartLocation.INTERNAL);
+                        containerOpenContext.setSide(AEPartLocation.DOWN);
                         bc.setOpenContext(containerOpenContext);
                     }
                     return bc;
