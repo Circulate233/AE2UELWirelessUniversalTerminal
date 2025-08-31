@@ -1,22 +1,13 @@
 package com.circulation.ae2wut.item;
 
-import appeng.api.AEApi;
-import appeng.api.features.ILocatable;
-import appeng.api.features.IWirelessTermHandler;
-import appeng.api.features.IWirelessTermRegistry;
-import appeng.api.util.AEPartLocation;
-import appeng.core.localization.PlayerMessages;
 import appeng.core.sync.GuiBridge;
 import appeng.items.tools.powered.ToolWirelessTerminal;
 import appeng.util.Platform;
 import baubles.api.BaublesApi;
 import com._0xc4de.ae2exttable.client.gui.AE2ExtendedGUIs;
-import com._0xc4de.ae2exttable.client.gui.PartGuiHandler;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
-import com.glodblock.github.inventory.GuiType;
-import com.glodblock.github.util.Util;
-import com.mekeng.github.common.container.handler.GuiHandler;
-import com.mekeng.github.common.container.handler.MkEGuis;
+import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
+import it.unimi.dsi.fastutil.bytes.ByteSet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -27,9 +18,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
@@ -41,33 +36,20 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Iterator;
+import java.util.List;
 
 public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
 
     public static String NAME = "wireless_universal_terminal";
-    IWirelessTermRegistry registry = AEApi.instance().registries().wireless();
     public static ItemWirelessUniversalTerminal INSTANCE = new ItemWirelessUniversalTerminal();
 
-    public static final int[] allMode = getAllMode();
-    public static final Set<Integer> allModeSet = new HashSet<>();
-
-    private static int[] getAllMode() {
-        List<Integer> modes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 10));
-
-        if (Loader.isModLoaded("ae2fc")) {
-            modes.add(4);
-        }
-        if (Loader.isModLoaded("mekeng")) {
-            modes.add(5);
-        }
-        if (Loader.isModLoaded("ae2exttable")) {
-            modes.addAll(Arrays.asList(6, 7, 8, 9));
-        }
-
-        return modes.stream().mapToInt(Integer::intValue).toArray();
-    }
+    private final ByteSet secure = new ByteOpenHashSet(){{
+        add((byte) 0);
+        add((byte) 2);
+        add((byte) 5);
+        add((byte) 10);
+    }};
 
     public ItemWirelessUniversalTerminal() {
         this.setMaxStackSize(1);
@@ -78,7 +60,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
             @SideOnly(Side.CLIENT)
             public float apply(@NotNull ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
                 if (stack.hasTagCompound()) {
-                    int mode = stack.getTagCompound().getInteger("mode");
+                    int mode = stack.getTagCompound().getByte("mode");
                     if (stack.getTagCompound().hasKey("Nova")) {
                         return 114514;
                     } else {
@@ -93,41 +75,18 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     @Override
     @SuppressWarnings("NullableProblems")
     public ActionResult<ItemStack> onItemRightClick(World w, EntityPlayer player, EnumHand hand) {
+        if (w.isRemote)return new ActionResult<>(EnumActionResult.FAIL, player.getHeldItem(hand));
         ItemStack item = player.getHeldItem(hand);
         if (item.hasTagCompound()) {
-            int mode = item.getTagCompound().getInteger("mode");
-            nbtChange(player, mode, hand);
-            switch (mode) {
-                case 0:
-                    registry.openWirelessTerminalGui(player.getHeldItem(hand), w, player);
-                    break;
-                case 1, 2, 3, 10:
-                    if (hasMode(item,mode)) {
-                        registry.openWirelessTerminalGui(player.getHeldItem(hand), w, player);
-                        break;
-                    }
-                    break;
-                case 4:
-                    if (Loader.isModLoaded("ae2fc")) {
-                        if (hasMode(item,mode)) {
-                            Util.openWirelessTerminal(player.getHeldItem(hand), hand == EnumHand.MAIN_HAND ? player.inventory.currentItem : 40, false, w, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
-                        }
-                    }
-                    break;
-                case 5:
-                    if (Loader.isModLoaded("mekeng")) {
-                        if (hasMode(item,mode)) {
-                            openWirelessTerminalGui(player.getHeldItem(hand), player, null, mode);
-                        }
-                    }
-                    break;
-                case 6, 7, 8, 9:
-                    if (Loader.isModLoaded("ae2exttable")) {
-                        if (hasMode(item,mode)) {
-                            openWirelessTerminalGui(player.getHeldItem(hand), player, getGui(mode), mode);
-                        }
-                    }
-                    break;
+            final var tag = item.getTagCompound();
+            byte mode = tag.getByte("mode");
+            int slot = hand == EnumHand.MAIN_HAND ? player.inventory.currentItem : 40;
+            if (mode != 0){
+                if (hasMode(item,mode)) {
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(item,player,mode,slot,false);
+                }
+            } else {
+                AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(item,player,mode,slot,false);
             }
         }
 
@@ -144,7 +103,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             if (stack.hasTagCompound()) {
-                return (I18n.format(this.getUnlocalizedNameInefficiently(stack) + ".name").trim() + getWirelessName(stack.getTagCompound().getInteger("mode"))).trim();
+                return (I18n.format(this.getUnlocalizedNameInefficiently(stack) + ".name").trim() + getWirelessName(stack.getTagCompound().getByte("mode"))).trim();
             } else {
                 return super.getItemStackDisplayName(stack);
             }
@@ -153,83 +112,19 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         }
     }
 
-    protected void openWirelessTerminalGui(ItemStack item, EntityPlayer player, Object gui, int mode) {
-        if (!Platform.isClient()) {
-            if (!registry.isWirelessTerminal(item)) {
-                player.sendMessage(PlayerMessages.DeviceNotWirelessTerminal.get());
-            } else {
-                IWirelessTermHandler handler = registry.getWirelessTerminalHandler(item);
-                String unparsedKey = handler.getEncryptionKey(item);
-                if (unparsedKey.isEmpty()) {
-                    player.sendMessage(PlayerMessages.DeviceNotLinked.get());
-                } else {
-                    long parsedKey = Long.parseLong(unparsedKey);
-                    ILocatable securityStation = AEApi.instance().registries().locatable().getLocatableBy(parsedKey);
-                    if (securityStation == null) {
-                        player.sendMessage(PlayerMessages.StationCanNotBeLocated.get());
-                    } else {
-                        if (handler.hasPower(player, 0.5F, item)) {
-                            if (mode == 5) {
-                                GuiHandler.openItemGui(player, player.world, player.inventory.currentItem, false, MkEGuis.WIRELESS_GAS_TERM);
-                            } else if (mode < 10) {
-                                PartGuiHandler.openGUI((AE2ExtendedGUIs) gui, player, new BlockPos(player.inventory.currentItem, 0, Integer.MIN_VALUE), AEPartLocation.fromFacing(EnumFacing.DOWN));
-                            }
-                        } else {
-                            player.sendMessage(PlayerMessages.DeviceNotPowered.get());
-                        }
-
-                    }
+    public void nbtChange(ItemStack item, byte mode) {
+        final var tag = item.getTagCompound();
+        tag.setByte("mode", mode);
+        if (secure.contains(mode)) return;
+        tag.setInteger("craft", 1);
+        if (hasMode(item, mode)) {
+            NBTTagList cache = tag.getCompoundTag("cache").getTagList(String.valueOf(mode), Constants.NBT.TAG_COMPOUND);
+            if (cache.tagCount() != 0) {
+                switch (mode) {
+                    case 1, 3, 4 -> tag.getCompoundTag("craftingGrid").setTag("Items", cache);
+                    case 6, 7, 8, 9 -> tag.setTag("crafting", cache);
                 }
-            }
-        }
-    }
-
-    public void nbtChange(EntityPlayer player, int mode, EnumHand hand) {
-        if (mode != 0 && mode != 2) {
-            ItemStack item = player.getHeldItem(hand);
-            if (item.hasTagCompound()) {
-                nbtChange(item,mode);
-            }
-        }
-    }
-
-    public void nbtChange(EntityPlayer player, int mode) {
-        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-            ItemStack item = player.inventory.getStackInSlot(i);
-            if (item.hasTagCompound() && item.getItem() == INSTANCE) {
-                nbtChange(item,mode);
-            }
-        }
-        if (Loader.isModLoaded("baubles")) {
-            baublesNBT(player, mode);
-        }
-    }
-
-    @Optional.Method(modid = "baubles")
-    public void baublesNBT(EntityPlayer player, int mode) {
-        for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
-            ItemStack item = BaublesApi.getBaublesHandler(player).getStackInSlot(i);
-            if (item.hasTagCompound() && item.getItem() == INSTANCE) {
-                nbtChange(item,mode);
-            }
-        }
-    }
-
-    public void nbtChange(ItemStack item, int mode) {
-        item.getTagCompound().setInteger("mode", mode);
-        item.getTagCompound().setInteger("craft", 1);
-        if (mode != 0 && mode != 2 && mode != 5 && mode != 10) {
-            List<Integer> list = Arrays.stream(item.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList());
-            if (hasMode(item,mode)) {
-                NBTTagList cache = item.getTagCompound().getCompoundTag("cache").getTagList(String.valueOf(mode), 10);
-                if (cache.tagCount() != 0) {
-                    if (mode < 6) {
-                        item.getTagCompound().getCompoundTag("craftingGrid").setTag("Items", cache);
-                    } else if (mode < 10) {
-                        item.getTagCompound().setTag("crafting", cache);
-                    }
-                    item.getTagCompound().getCompoundTag("cache").removeTag(String.valueOf(mode));
-                }
+                tag.getCompoundTag("cache").removeTag(String.valueOf(mode));
             }
         }
     }
@@ -256,89 +151,73 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         }
     }
 
-    private final Set<Integer> secure = new HashSet<>(){{
-        add(0);
-        add(2);
-        add(5);
-        add(10);
-    }};
-
     public void nbtChangeB(ItemStack item) {
-        int mode = item.getTagCompound().getInteger("mode");
-        item.getTagCompound().setInteger("craft", 0);
-        if (!secure.contains(mode)) {
-            if (hasMode(item,mode)) {
-                item.getTagCompound().setInteger("mode", mode);
-                NBTTagList items = item.getTagCompound().getCompoundTag("craftingGrid").getTagList("Items", 10);
-                if (Loader.isModLoaded("ae2exttable") && item.getTagCompound().hasKey("crafting")) {
-                    int ii = 0;
-                    int iii = switch (mode) {
-                        case 6 -> 9;
-                        case 7 -> 25;
-                        case 8 -> 49;
-                        case 9 -> 81;
-                        default -> 0;
-                    };
-                    int iiii = 0;
-                    NBTTagList nbtList = new NBTTagList();
-                    Iterator<NBTBase> iterator = item.getTagCompound().getTagList("crafting", 10).iterator();
-                    while (iterator.hasNext() && ii < iii) {
-                        NBTBase nbt = iterator.next();
-                        if (nbt instanceof NBTTagCompound n) {
-                            if (!n.getString("id").endsWith("air") || !n.getString("id").startsWith("minecraft")) {
-                                nbtList.appendTag(nbt);
-                                iiii++;
-                            } else {
-                                nbtList.appendTag(new NBTTagCompound());
-                            }
+        final var tag = item.getTagCompound();
+        byte mode = tag.getByte("mode");
+        if (secure.contains(mode)) return;
+        tag.setInteger("craft", 0);
+        if (hasMode(item, mode)) {
+            tag.setByte("mode", mode);
+            NBTTagList items = tag.getCompoundTag("craftingGrid").getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            if (Loader.isModLoaded("ae2exttable") && tag.hasKey("crafting")) {
+                int ii = 0;
+                int iii = switch (mode) {
+                    case 6 -> 9;
+                    case 7 -> 25;
+                    case 8 -> 49;
+                    case 9 -> 81;
+                    default -> 0;
+                };
+                int iiii = 0;
+                NBTTagList nbtList = new NBTTagList();
+                Iterator<NBTBase> iterator = tag.getTagList("crafting", Constants.NBT.TAG_COMPOUND).iterator();
+                while (iterator.hasNext() && ii < iii) {
+                    NBTBase nbt = iterator.next();
+                    if (nbt instanceof NBTTagCompound n) {
+                        if (!n.getString("id").endsWith("air") || !n.getString("id").startsWith("minecraft")) {
+                            nbtList.appendTag(nbt);
+                            iiii++;
+                        } else {
+                            nbtList.appendTag(new NBTTagCompound());
                         }
-                        ii++;
                     }
-                    if (iiii > 0) {
-                        items = nbtList;
-                    }
+                    ii++;
                 }
-                if (items.tagCount() != 0) {
-                    if (!item.getTagCompound().hasKey("cache")) {
-                        item.getTagCompound().setTag("cache", new NBTTagCompound());
-                    }
-                    item.getTagCompound().getCompoundTag("cache").setTag(String.valueOf(mode), items);
+                if (iiii > 0) {
+                    items = nbtList;
                 }
-                item.getTagCompound().getCompoundTag("craftingGrid").removeTag("Items");
-                item.getTagCompound().removeTag("crafting");
             }
+            if (items.tagCount() != 0) {
+                if (!tag.hasKey("cache")) {
+                    tag.setTag("cache", new NBTTagCompound());
+                }
+                tag.getCompoundTag("cache").setTag(String.valueOf(mode), items);
+            }
+            tag.getCompoundTag("craftingGrid").removeTag("Items");
+            tag.removeTag("crafting");
         }
     }
 
     public static String getWirelessName(int value) {
-        switch (value) {
-            case 1:
-                return getString("item.appliedenergistics2.wireless_crafting_terminal.name");
-            case 2:
-                return getString("item.appliedenergistics2.wireless_fluid_terminal.name");
-            case 3:
-                return getString("item.appliedenergistics2.wireless_pattern_terminal.name");
-            case 4:
-                return getString("item.ae2fc:wireless_fluid_pattern_terminal.name");
-            case 5:
-                return getString("item.mekeng:wireless_gas_terminal.name");
-            case 6:
-                return getString("item.ae2exttable.wireless_basic_crafting_terminal.name");
-            case 7:
-                return getString("item.ae2exttable.wireless_advanced_crafting_terminal.name");
-            case 8:
-                return getString("item.ae2exttable.wireless_elite_crafting_terminal.name");
-            case 9:
-                return getString("item.ae2exttable.wireless_ultimate_crafting_terminal.name");
-            case 10:
-                return getString("item.appliedenergistics2.wireless_interface_terminal.name");
-            default:
-                return "";
-        }
+        return switch (value) {
+            case 1 -> getString("item.appliedenergistics2.wireless_crafting_terminal.name");
+            case 2 -> getString("item.appliedenergistics2.wireless_fluid_terminal.name");
+            case 3 -> getString("item.appliedenergistics2.wireless_pattern_terminal.name");
+            case 4 -> getString("item.ae2fc:wireless_fluid_pattern_terminal.name");
+            case 5 -> getString("item.mekeng:wireless_gas_terminal.name");
+            case 6 -> getString("item.ae2exttable.wireless_basic_crafting_terminal.name");
+            case 7 -> getString("item.ae2exttable.wireless_advanced_crafting_terminal.name");
+            case 8 -> getString("item.ae2exttable.wireless_elite_crafting_terminal.name");
+            case 9 -> getString("item.ae2exttable.wireless_ultimate_crafting_terminal.name");
+            case 10 -> getString("item.appliedenergistics2.wireless_interface_terminal.name");
+            default -> "";
+        };
     }
 
     @Override
-    public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {return true;}
+    public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
+        return true;
+    }
 
     public static String getString(String value) {
         return "§6(" + I18n.format(value) + ")";
@@ -372,7 +251,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     @Override
     public IGuiHandler getGuiHandler(ItemStack is) {
         if (is.hasTagCompound()) {
-            int mode = is.getTagCompound().getInteger("mode");
+            byte mode = is.getTagCompound().getByte("mode");
             switch (mode) {
                 case 0:
                     return GuiBridge.GUI_WIRELESS_TERM;
@@ -396,21 +275,21 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         NBTTagCompound tag = Platform.openNbtData(charged);
         tag.setDouble("internalCurrentPower", this.getAEMaxPower(charged));
         tag.setDouble("internalMaxPower", this.getAEMaxPower(charged));
-        tag.setIntArray("modes", allMode);
+        tag.setIntArray("modes", AE2UELWirelessUniversalTerminal.proxy.getAllMode());
         itemStacks.add(charged);
     }
 
     @Optional.Method(modid = "ae2exttable")
     public static AE2ExtendedGUIs getGuiType(ItemStack item) {
         if (item.hasTagCompound()) {
-            int mode = item.getTagCompound().getInteger("mode");
+            byte mode = item.getTagCompound().getByte("mode");
             return getGui(mode);
         }
         return null;
     }
 
     @Optional.Method(modid = "ae2exttable")
-    public static AE2ExtendedGUIs getGui(int value) {
+    public static AE2ExtendedGUIs getGui(byte value) {
         return switch (value) {
             case 6 -> AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
             case 7 -> AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
@@ -420,13 +299,8 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         };
     }
 
-    public boolean hasMode(ItemStack t,int mode){
-        if (allModeSet.isEmpty()){
-            for (int i : allMode) {
-                allModeSet.add(i);
-            }
-        }
-        if (!allModeSet.contains(mode) || !t.hasTagCompound())return false;
+    public boolean hasMode(ItemStack t,byte mode){
+        if (!AE2UELWirelessUniversalTerminal.proxy.getAllModeSet().contains(mode) || !t.hasTagCompound())return false;
         for (int m : t.getTagCompound().getIntArray("modes")){
             if (m == mode)return true;
         }

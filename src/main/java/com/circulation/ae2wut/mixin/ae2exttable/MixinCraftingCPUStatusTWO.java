@@ -42,7 +42,7 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
             ItemStack item = wt.getItemStack();
             if (item.getItem() instanceof ItemWirelessUniversalTerminal) {
                 if (item.getTagCompound() != null) {
-                    int mode = item.getTagCompound().getInteger("mode");
+                    byte mode = item.getTagCompound().getByte("mode");
                     var gui = ItemWirelessUniversalTerminal.getGui(mode);
                     if (gui != null) {
                         this.ae2WirelessUniversalTerminal$extendedOriginalGui = gui;

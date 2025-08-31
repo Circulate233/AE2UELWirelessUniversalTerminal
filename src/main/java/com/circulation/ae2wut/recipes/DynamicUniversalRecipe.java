@@ -2,6 +2,7 @@ package com.circulation.ae2wut.recipes;
 
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -12,7 +13,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,12 +27,12 @@ public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForge
 
     public DynamicUniversalRecipe(ItemStack additionalItem, int mode) {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("mode",mode);
-        nbt.setIntArray("modes",new int[]{mode});
+        nbt.setInteger("mode", mode);
+        nbt.setIntArray("modes", new int[]{mode});
         this.inputTerminalOut.setTagCompound(nbt);
         this.additionalItem = additionalItem;
         this.mode = mode;
-        this.setRegistryName(new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID,"universal" +  mode));
+        this.setRegistryName(new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, "universal" + mode));
     }
 
     @Override
@@ -97,8 +97,15 @@ public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForge
         return terminal;
     }
 
-    @Override public boolean canFit(int width, int height) { return width * height >= 2; }
-    @Override public ItemStack getRecipeOutput() { return inputTerminalOut.copy(); }
+    @Override
+    public boolean canFit(int width, int height) {
+        return width * height >= 2;
+    }
+
+    @Override
+    public ItemStack getRecipeOutput() {
+        return inputTerminalOut.copy();
+    }
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
@@ -108,10 +115,15 @@ public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForge
         return list;
     }
 
+    @Override
+    public boolean isDynamic() {
+        return true;
+    }
+
     public static final List<DynamicUniversalRecipe> RECIPES = registerRecipes();
 
     private static List<DynamicUniversalRecipe> registerRecipes() {
-        List<DynamicUniversalRecipe> RECIPES = new ArrayList<>();
+        List<DynamicUniversalRecipe> RECIPES = new ObjectArrayList<>();
         itemList.forEach((mode, item) -> RECIPES.add(new DynamicUniversalRecipe(item, mode)));
         return RECIPES;
     }

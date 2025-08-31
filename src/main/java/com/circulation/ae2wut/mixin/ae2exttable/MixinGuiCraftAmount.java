@@ -10,6 +10,7 @@ import com._0xc4de.ae2exttable.items.ItemRegistry;
 import com._0xc4de.ae2exttable.network.ExtendedTerminalNetworkHandler;
 import com._0xc4de.ae2exttable.network.packets.PacketSwitchGui;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -19,8 +20,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.ArrayList;
 
 @Mixin(value= GuiCraftAmount.class, remap=false)
 public abstract class MixinGuiCraftAmount extends AEBaseGui {
@@ -44,7 +43,7 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
                 if (itemstack.getTagCompound() != null) {
                     switch (itemstack.getTagCompound().getInteger("mode")) {
                         case 6,7,8,9: {
-                            for (Object btn : new ArrayList<>(this.buttonList)) {
+                            for (Object btn : new ObjectArrayList<>(this.buttonList)) {
                                 if (btn instanceof GuiTabButton b) {
                                     this.buttonList.remove(b);
                                 }
@@ -64,10 +63,5 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
             ExtendedTerminalNetworkHandler.instance().sendToServer(new PacketSwitchGui(this.ae2WirelessUniversalTerminal$extendedOriginalGui));
             ci.cancel();
         }
-    }
-
-    @Shadow
-    public void drawFG(int i, int i1, int i2, int i3) {
-
     }
 }

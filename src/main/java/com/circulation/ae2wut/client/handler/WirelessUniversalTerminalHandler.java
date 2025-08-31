@@ -5,6 +5,8 @@ import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.network.UpdateItemModeMessage;
 import com.circulation.ae2wut.network.WirelessTerminalRefresh;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -17,11 +19,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class WirelessUniversalTerminalHandler {
 
@@ -57,17 +54,24 @@ public class WirelessUniversalTerminalHandler {
                 delta = delta / 120 ;
             }
             if (delta != 0 && stack.getItem() instanceof ItemWirelessUniversalTerminal) {
-                List<Integer> list = new ArrayList<>();
-                if (stack.getTagCompound() != null) {
-                    if (stack.getTagCompound().hasKey("modes")) {
-                        list.addAll(Arrays.stream(stack.getTagCompound().getIntArray("modes")).boxed().collect(Collectors.toList()));
+                final var tag = stack.getTagCompound();
+                if (tag != null) {
+                    IntList list = null;
+                    if (tag.hasKey("modes")) {
+                        list = new IntArrayList(tag.getIntArray("modes"));
+                        if (!list.contains(0)){
+                            list.add(0);
+                        }
                     }
-                    if (!list.contains(0)){
-                        list.add(0);
-                    }
-                    if (list.size() > 1) {
-                        final int listMax = Arrays.stream(stack.getTagCompound().getIntArray("modes")).max().getAsInt() + 1;
-                        int newVal = (stack.getTagCompound().getInteger("mode") + delta) % listMax;
+                    if (list != null) {
+                        int[] modes = stack.getTagCompound().getIntArray("modes");
+                        int max = Integer.MIN_VALUE;
+                        for (int mode : modes) {
+                            if (mode > max) max = mode;
+                        }
+                        final int listMax = modes.length > 0 ? max + 1 : 1;
+
+                        int newVal = (tag.getInteger("mode") + delta) % listMax;
 
                         while (!list.contains(newVal)) {
                             if (newVal < 0) {
@@ -81,7 +85,7 @@ public class WirelessUniversalTerminalHandler {
                             }
                         }
 
-                        stack.getTagCompound().setInteger("mode", newVal);
+                        tag.setInteger("mode", newVal);
                         mc.player.sendStatusMessage(new TextComponentString(stack.getDisplayName()),true);
                         AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new UpdateItemModeMessage(mc.player.inventory.currentItem,(byte) newVal,false));
 

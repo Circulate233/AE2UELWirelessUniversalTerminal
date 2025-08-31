@@ -206,7 +206,7 @@ dependencies {
     implementation rfg.deobf("curse.maven:had-enough-items-557549:4810661")
     compileOnly rfg.deobf("curse.maven:MekanismEnergistics-1027681:5775101")
     implementation rfg.deobf("curse.maven:extended-crafting-nomifactory-edition-398267:5778512")
-    compileOnly rfg.deobf("curse.maven:extended-crafting-terminals-for-applied-1157825:6749027")
+    compileOnly rfg.deobf("curse.maven:extended-crafting-terminals-for-applied-1157825:6895322")
     implementation rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5751930")
 }
 

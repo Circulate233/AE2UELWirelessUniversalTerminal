@@ -1,6 +1,5 @@
 package com.circulation.ae2wut.mixin.ae2;
 
-import appeng.api.definitions.IItemDefinition;
 import appeng.core.sync.GuiBridge;
 import appeng.items.tools.powered.Terminal;
 import org.spongepowered.asm.mixin.Final;
@@ -16,9 +15,6 @@ public class MixinTerminal {
     @Final
     @Shadow
     GuiBridge bridge;
-    @Final
-    @Shadow
-    IItemDefinition itemDefinition;
 
     @Inject(method = "getBridge",at = @At("RETURN"), cancellable = true)
     public void getBridgeMixin(CallbackInfoReturnable<GuiBridge> cir) {

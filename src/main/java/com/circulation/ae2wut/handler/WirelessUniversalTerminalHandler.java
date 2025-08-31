@@ -27,7 +27,7 @@ public class WirelessUniversalTerminalHandler {
     }
 
     @SubscribeEvent
-    public static void onRegisterRecipes(RegistryEvent.Register<IRecipe> event) {
+    public void onRegisterRecipes(RegistryEvent.Register<IRecipe> event) {
         AllWUTRecipe.reciperRegister();
         event.getRegistry().registerAll(DynamicUniversalRecipe.RECIPES.toArray(new DynamicUniversalRecipe[0]));
     }
