@@ -5,9 +5,12 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "gui.MixinGuiMEMonitorable",
+    "gui.MixinGuiWirelessFluidTerminal",
+    "gui.MixinGuiWirelessInterfaceTerminal"
   ],
   "mixins": [
     "MixinPacketTerminalUse",
     "MixinTerminal"
-    ]
+  ]
 }

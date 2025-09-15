@@ -9,6 +9,7 @@ import appeng.container.AEBaseContainer;
 import appeng.core.localization.PlayerMessages;
 import appeng.util.Platform;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.circulation.ae2wut.network.OpenWUTGui;
 import com.circulation.ae2wut.network.UpdateItemModeMessage;
 import com.circulation.ae2wut.network.WirelessTerminalRefresh;
 import com.circulation.ae2wut.proxy.ClientProxy;
@@ -57,6 +58,7 @@ public class AE2UELWirelessUniversalTerminal {
 
         NET_CHANNEL.registerMessage(UpdateItemModeMessage.Handler.class, UpdateItemModeMessage.class, start++, Side.SERVER);
         NET_CHANNEL.registerMessage(WirelessTerminalRefresh.Handler.class, WirelessTerminalRefresh.class, start++, Side.SERVER);
+        NET_CHANNEL.registerMessage(OpenWUTGui.class, OpenWUTGui.class, start++, Side.SERVER);
 
         NET_CHANNEL.registerMessage(UpdateItemModeMessage.Handler.class, UpdateItemModeMessage.class, start++, Side.CLIENT);
 

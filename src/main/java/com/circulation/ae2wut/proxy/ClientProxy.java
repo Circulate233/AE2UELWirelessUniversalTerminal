@@ -48,12 +48,14 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public @Nullable Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        ItemStack terminal = ItemStack.EMPTY;
+        ItemStack terminal;
         final byte mode = (byte) ID;
         if (y == 0){
             terminal = player.inventory.getStackInSlot(x);
         } else if (Loader.isModLoaded("baubles") && y == 1) {
             terminal = getBaubleItem(player,x);
+        } else {
+            terminal = ItemStack.EMPTY;
         }
 
         if (!terminal.isEmpty()){

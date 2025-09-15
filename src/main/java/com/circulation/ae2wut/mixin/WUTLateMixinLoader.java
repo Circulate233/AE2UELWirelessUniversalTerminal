@@ -23,6 +23,7 @@ public class WUTLateMixinLoader implements ILateMixinLoader {
         addMixinCFG("mixins.ae2wut.json");
         addModdedMixinCFG("mixins.ae2wut.ae2fc.json",                 "ae2fc");
         addModdedMixinCFG("mixins.ae2wut.ae2exttable.json",                 "ae2exttable");
+        addModdedMixinCFG("mixins.ae2wut.mekeng.json",                 "mekeng");
     }
 
     @Override

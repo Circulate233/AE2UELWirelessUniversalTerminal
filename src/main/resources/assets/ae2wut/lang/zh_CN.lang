@@ -6,4 +6,6 @@ item.wut.tooltip2=§6按住shift查看更多介绍
 item.wut.shift_tooltip=持有终端：
 item.wut.shift_tooltip1=无
 
+wut.btn.name=选择终端
+
 itemGroup.ae2wut=无线通用终端

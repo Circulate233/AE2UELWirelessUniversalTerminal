@@ -1,14 +1,12 @@
-# Item Name
 item.ae2wut.wireless_universal_terminal.name=Wireless Universal Terminal
 
-# Tooltips
 item.wut.tooltip=§9Hold Shift + Scroll to switch modes
 item.wut.tooltip1=§9Supports original terminal shortcuts
 item.wut.tooltip2=§6Hold §lSHIFT§r§6 for details
 
-# Shift Tooltips
 item.wut.shift_tooltip=§bIntegrated Terminals:
 item.wut.shift_tooltip1=§7None
 
-# Creative Tab
+wut.btn.name=Select terminal
+
 itemGroup.ae2wut=Wireless Universal Terminals
