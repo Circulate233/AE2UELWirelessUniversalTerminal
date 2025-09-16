@@ -11,7 +11,6 @@ import appeng.container.AEBaseContainer;
 import appeng.container.implementations.ContainerWirelessCraftingTerminal;
 import appeng.container.implementations.ContainerWirelessInterfaceTerminal;
 import appeng.container.implementations.ContainerWirelessPatternTerminal;
-import appeng.container.implementations.ContainerWirelessTerm;
 import appeng.fluids.client.gui.GuiWirelessFluidTerminal;
 import appeng.fluids.container.ContainerWirelessFluidTerminal;
 import appeng.helpers.WirelessTerminalGuiObject;
@@ -61,7 +60,6 @@ public class WutRegisterHandler {
     }
 
     private static void registerAEContainer() {
-        registerContainer(0, ContainerWirelessTerm.class);
         registerContainer(1, ContainerWirelessCraftingTerminal.class);
         registerContainer(2, ContainerWirelessFluidTerminal.class);
         registerContainer(3, ContainerWirelessPatternTerminal.class);
@@ -176,8 +174,8 @@ public class WutRegisterHandler {
             return map.getByte(c);
         }
 
-        private static void regIcon(int id,ItemStack icon){
-            TooltipButton.regIcon((byte) id,icon);
+        private static void regIcon(int id, ItemStack icon) {
+            TooltipButton.regIcon((byte) id, icon);
         }
 
         public static void registerAllGui() {
@@ -196,23 +194,23 @@ public class WutRegisterHandler {
             registerGui(10, GuiWirelessInterfaceTerminal.class);
 
             var item = AEApi.instance().definitions().items();
-            regIcon(0,item.wirelessTerminal().maybeStack(1).get());
-            regIcon(1,item.wirelessCraftingTerminal().maybeStack(1).get());
-            regIcon(2,item.wirelessFluidTerminal().maybeStack(1).get());
-            regIcon(3,item.wirelessPatternTerminal().maybeStack(1).get());
-            regIcon(10,item.wirelessInterfaceTerminal().maybeStack(1).get());
+            regIcon(0, item.wirelessTerminal().maybeStack(1).get());
+            regIcon(1, item.wirelessCraftingTerminal().maybeStack(1).get());
+            regIcon(2, item.wirelessFluidTerminal().maybeStack(1).get());
+            regIcon(3, item.wirelessPatternTerminal().maybeStack(1).get());
+            regIcon(10, item.wirelessInterfaceTerminal().maybeStack(1).get());
         }
 
         @Optional.Method(modid = "ae2fc")
         private static void registerAE2FCGUI() {
             registerGui(4, GuiWirelessFluidPatternTerminal.class);
-            regIcon(4,new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
+            regIcon(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
         }
 
         @Optional.Method(modid = "mekeng")
         private static void registerMEKGUI() {
             registerGui(5, GuiWirelessGasTerminal.class);
-            regIcon(5,new ItemStack(ItemAndBlocks.WIRELESS_GAS_TERMINAL));
+            regIcon(5, new ItemStack(ItemAndBlocks.WIRELESS_GAS_TERMINAL));
         }
 
         @Optional.Method(modid = "ae2exttable")
@@ -222,10 +220,10 @@ public class WutRegisterHandler {
             registerAE2EGUI(8, GuiWirelessEliteCraftingTerm.class, ContainerEliteWirelessTerminal.class);
             registerAE2EGUI(9, GuiWirelessUltimateCraftingTerm.class, ContainerUltimateWirelessTerminal.class);
 
-            regIcon(6,new ItemStack(ItemRegistry.WIRELESS_BASIC_TERMINAL));
-            regIcon(7,new ItemStack(ItemRegistry.WIRELESS_ADVANCED_TERMINAL));
-            regIcon(8,new ItemStack(ItemRegistry.WIRELESS_ELITE_TERMINAL));
-            regIcon(9,new ItemStack(ItemRegistry.WIRELESS_ULTIMATE_TERMINAL));
+            regIcon(6, new ItemStack(ItemRegistry.WIRELESS_BASIC_TERMINAL));
+            regIcon(7, new ItemStack(ItemRegistry.WIRELESS_ADVANCED_TERMINAL));
+            regIcon(8, new ItemStack(ItemRegistry.WIRELESS_ELITE_TERMINAL));
+            regIcon(9, new ItemStack(ItemRegistry.WIRELESS_ULTIMATE_TERMINAL));
         }
 
         @Optional.Method(modid = "ae2exttable")
@@ -239,7 +237,7 @@ public class WutRegisterHandler {
 
         @Optional.Method(modid = "ae2exttable")
         private static void registerAE2EGUI(int id, Class<? extends AEBaseGui> constructor, Class<? extends AEBaseContainer> container) {
-            map.put(constructor,(byte) id);
+            map.put(constructor, (byte) id);
             var c = getAE2EContainer(container);
             var g = getAE2EGui(constructor, container);
             if (c != null && g != null) {
@@ -271,7 +269,7 @@ public class WutRegisterHandler {
         }
 
         private static void registerGui(int id, Class<? extends AEBaseGui> constructor) {
-            map.put(constructor,(byte) id);
+            map.put(constructor, (byte) id);
             var c = getGui(constructor);
             if (c != null) {
                 AE2UELWirelessUniversalTerminal.instance.registryGui(

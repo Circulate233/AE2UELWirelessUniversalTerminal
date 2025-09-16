@@ -29,9 +29,9 @@ public abstract class MixinWirelessTerminalGuiObjectTwo extends WirelessTerminal
         super(wh, is, ep, w, x, y, z);
     }
 
-    @Redirect(method = "<init>",at = @At(value = "INVOKE", target = "Lcom/_0xc4de/ae2exttable/items/ItemRegistry;guiByItem(Lnet/minecraft/item/Item;)Lcom/_0xc4de/ae2exttable/client/gui/AE2ExtendedGUIs;"))
+    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/_0xc4de/ae2exttable/items/ItemRegistry;guiByItem(Lnet/minecraft/item/Item;)Lcom/_0xc4de/ae2exttable/client/gui/AE2ExtendedGUIs;"))
     private AE2ExtendedGUIs RedirectGuiByItem(Item item) {
-        if (effectiveItem.getItem() instanceof ItemWirelessUniversalTerminal){
+        if (effectiveItem.getItem() instanceof ItemWirelessUniversalTerminal) {
             return ItemWirelessUniversalTerminal.getGuiType(effectiveItem);
         }
         return ItemRegistry.guiByItem(effectiveItem.getItem());

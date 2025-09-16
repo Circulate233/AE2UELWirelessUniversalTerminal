@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -24,6 +23,7 @@ public class GuiHandler {
 
         var modeSet = new IntArrayList(terminal.getTagCompound().getIntArray("modes"));
         modeSet.rem(nowGui);
+        modeSet.rem(0);
         var modes = modeSet.toIntArray();
         for (byte i = 0; i < modes.length; i++) {
             final byte mode = (byte) modes[i];
@@ -54,9 +54,9 @@ public class GuiHandler {
     private static final int height = 94;
 
     public static void drawGui(GuiScreen gui, int x, int y) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        gui.mc.getTextureManager().bindTexture(wut$guiRl);
-        gui.drawTexturedModalRect(x, y - 6, 0, 0, width, height);
+//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+//        gui.mc.getTextureManager().bindTexture(wut$guiRl);
+//        gui.drawTexturedModalRect(x, y - 6, 0, 0, width, height);
     }
 
     public static Rectangle getRectangle(int x, int y) {

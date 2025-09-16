@@ -10,6 +10,7 @@ import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.handler.WirelessUniversalTerminalHandler;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.circulation.ae2wut.recipes.AllWUTRecipe;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -36,9 +37,8 @@ public class CommonProxy implements IGuiHandler {
     }
 
     public void preInit() {
-        NetworkRegistry.INSTANCE.registerGuiHandler(AE2UELWirelessUniversalTerminal.MOD_ID,this);
-
-        MinecraftForge.EVENT_BUS.register(WirelessUniversalTerminalHandler.INSTANCE);
+        NetworkRegistry.INSTANCE.registerGuiHandler(AE2UELWirelessUniversalTerminal.MOD_ID, this);
+        MinecraftForge.EVENT_BUS.register(new WirelessUniversalTerminalHandler());
     }
 
     public void init() {
@@ -47,6 +47,7 @@ public class CommonProxy implements IGuiHandler {
     }
 
     public void postInit() {
+        AllWUTRecipe.reciperRegister();
         Upgrades.MAGNET.registerItem(new ItemStack(ItemWirelessUniversalTerminal.INSTANCE), 1);
     }
 
@@ -54,18 +55,18 @@ public class CommonProxy implements IGuiHandler {
     public @Nullable Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         ItemStack terminal;
         final byte mode = (byte) ID;
-        if (y == 0){
+        if (y == 0) {
             terminal = player.inventory.getStackInSlot(x);
         } else if (Loader.isModLoaded("baubles") && y == 1) {
-            terminal = getBaubleItem(player,x);
+            terminal = getBaubleItem(player, x);
         } else {
             terminal = ItemStack.EMPTY;
         }
 
-        if (!terminal.isEmpty()){
-            if (terminal.getItem() instanceof ItemWirelessUniversalTerminal wut){
-                if (wut.hasMode(terminal,mode)){
-                    var bc = ContainerMap.get(mode).get(terminal,player,x,y);
+        if (!terminal.isEmpty()) {
+            if (terminal.getItem() instanceof ItemWirelessUniversalTerminal wut) {
+                if (wut.hasMode(terminal, mode)) {
+                    var bc = ContainerMap.get(mode).get(terminal, player, x, y);
                     if (bc != null) {
                         var containerOpenContext = new ContainerOpenContext(terminal);
                         containerOpenContext.setWorld(world);
@@ -89,18 +90,18 @@ public class CommonProxy implements IGuiHandler {
     }
 
     @Optional.Method(modid = "baubles")
-    protected ItemStack getBaubleItem(EntityPlayer player,int slot) {
+    protected ItemStack getBaubleItem(EntityPlayer player, int slot) {
         return BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
     }
 
-    public void registryContainer(byte id, AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer> function){
-        ContainerMap.put(id,function);
+    public void registryContainer(byte id, AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer> function) {
+        ContainerMap.put(id, function);
     }
 
     private final IntSet allModeSet = new IntOpenHashSet();
 
-    public IntSet getAllModeSet(){
-        if (allModeSet.size() == ContainerMap.size()){
+    public IntSet getAllModeSet() {
+        if (allModeSet.size() == ContainerMap.size()) {
             return allModeSet;
         }
 

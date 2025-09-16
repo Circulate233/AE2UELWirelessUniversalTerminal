@@ -13,7 +13,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,62 +30,66 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 
 public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
 
-    public static String NAME = "wireless_universal_terminal";
-    public static ItemWirelessUniversalTerminal INSTANCE = new ItemWirelessUniversalTerminal();
+    public static final String NAME = "wireless_universal_terminal";
+    public static final ItemWirelessUniversalTerminal INSTANCE = new ItemWirelessUniversalTerminal();
 
-    private final ByteSet secure = new ByteOpenHashSet(){{
+    private final ByteSet secure = new ByteOpenHashSet() {{
         add((byte) 0);
         add((byte) 2);
         add((byte) 5);
         add((byte) 10);
     }};
 
-    public ItemWirelessUniversalTerminal() {
+    private ItemWirelessUniversalTerminal() {
         this.setMaxStackSize(1);
         this.setCreativeTab(CreativeTab.INSTANCE);
         this.setRegistryName(new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME));
         this.setTranslationKey(AE2UELWirelessUniversalTerminal.MOD_ID + '.' + NAME);
-        this.addPropertyOverride(new ResourceLocation("mode"), new IItemPropertyGetter() {
-            @SideOnly(Side.CLIENT)
-            public float apply(@NotNull ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
-                if (stack.hasTagCompound()) {
-                    int mode = stack.getTagCompound().getByte("mode");
-                    if (stack.getTagCompound().hasKey("Nova")) {
-                        return 114514;
-                    } else {
-                        return mode;
-                    }
+        this.addPropertyOverride(new ResourceLocation("mode"), (stack, worldIn, entityIn) -> {
+            if (stack.hasTagCompound()) {
+                if (stack.getTagCompound().hasKey("Nova")) {
+                    return 114514;
+                } else {
+                    return stack.getTagCompound().getByte("mode");
                 }
-                return 0;
             }
+            return 0;
         });
     }
 
     @Override
     @SuppressWarnings("NullableProblems")
     public ActionResult<ItemStack> onItemRightClick(World w, EntityPlayer player, EnumHand hand) {
-        if (w.isRemote)return new ActionResult<>(EnumActionResult.FAIL, player.getHeldItem(hand));
+        if (w.isRemote) return new ActionResult<>(EnumActionResult.FAIL, player.getHeldItem(hand));
         ItemStack item = player.getHeldItem(hand);
         if (item.hasTagCompound()) {
             final var tag = item.getTagCompound();
             byte mode = tag.getByte("mode");
             int slot = hand == EnumHand.MAIN_HAND ? player.inventory.currentItem : 40;
-            if (mode != 0){
-                if (hasMode(item,mode)) {
-                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(item,player,mode,slot,false);
-                }
-            } else {
-                AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(item,player,mode,slot,false);
+            if (mode == 0) {
+                if (tag.hasKey("modes", 11)) {
+                    var modes = tag.getIntArray("modes");
+                    if (modes.length == 0)
+                        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                    mode = (byte) modes[0];
+                    if (mode == 0) {
+                        if (modes.length == 1)
+                            return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                        mode = (byte) modes[1];
+                    }
+                } else
+                    return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+            }
+            if (hasMode(item, mode)) {
+                AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(item, player, mode, slot, false);
             }
         }
 
@@ -198,6 +201,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public static String getWirelessName(int value) {
         return switch (value) {
             case 1 -> getString("item.appliedenergistics2.wireless_crafting_terminal.name");
@@ -219,6 +223,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         return true;
     }
 
+    @SideOnly(Side.CLIENT)
     public static String getString(String value) {
         return "§6(" + I18n.format(value) + ")";
     }
@@ -228,23 +233,23 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public void addCheckedInformation(ItemStack stack, World world, List<String> lines, ITooltipFlag advancedTooltips) {
         super.addCheckedInformation(stack, world, lines, advancedTooltips);
         if (stack.hasTagCompound()) {
-           if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)){
-               lines.add(I18n.format("item.wut.shift_tooltip"));
-               int[] modes = stack.getTagCompound().getIntArray("modes");
-               if (modes.length != 0) {
-                   for (int number : modes) {
-                       if (number != 0) {
-                           lines.add("  - " + getWirelessName(number));
-                       }
-                   }
-               } else {
-                   lines.add("   " + I18n.format("item.wut.shift_tooltip1"));
-               }
-           } else {
-               lines.add(I18n.format("item.wut.tooltip"));
-               lines.add(I18n.format("item.wut.tooltip1"));
-               lines.add(I18n.format("item.wut.tooltip2"));
-           }
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                lines.add(I18n.format("item.wut.shift_tooltip"));
+                int[] modes = stack.getTagCompound().getIntArray("modes");
+                if (modes.length != 0) {
+                    for (int number : modes) {
+                        if (number != 0) {
+                            lines.add("  - " + getWirelessName(number));
+                        }
+                    }
+                } else {
+                    lines.add("   " + I18n.format("item.wut.shift_tooltip1"));
+                }
+            } else {
+                lines.add(I18n.format("item.wut.tooltip"));
+                lines.add(I18n.format("item.wut.tooltip1"));
+                lines.add(I18n.format("item.wut.tooltip2"));
+            }
         }
     }
 
@@ -252,25 +257,19 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public IGuiHandler getGuiHandler(ItemStack is) {
         if (is.hasTagCompound()) {
             byte mode = is.getTagCompound().getByte("mode");
-            switch (mode) {
-                case 0:
-                    return GuiBridge.GUI_WIRELESS_TERM;
-                case 1:
-                    return GuiBridge.GUI_WIRELESS_CRAFTING_TERMINAL;
-                case 2:
-                    return GuiBridge.GUI_WIRELESS_FLUID_TERMINAL;
-                case 3:
-                    return GuiBridge.GUI_WIRELESS_PATTERN_TERMINAL;
-                case 10:
-                    return GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL;
-            }
+            return switch (mode) {
+                case 1 -> GuiBridge.GUI_WIRELESS_CRAFTING_TERMINAL;
+                case 2 -> GuiBridge.GUI_WIRELESS_FLUID_TERMINAL;
+                case 3 -> GuiBridge.GUI_WIRELESS_PATTERN_TERMINAL;
+                case 10 -> GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL;
+                default -> null;
+            };
         }
-        return GuiBridge.GUI_WIRELESS_TERM;
+        return null;
     }
 
     @Override
     protected void getCheckedSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> itemStacks) {
-        super.getCheckedSubItems(creativeTab, itemStacks);
         ItemStack charged = new ItemStack(this, 1);
         NBTTagCompound tag = Platform.openNbtData(charged);
         tag.setDouble("internalCurrentPower", this.getAEMaxPower(charged));
@@ -299,10 +298,10 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         };
     }
 
-    public boolean hasMode(ItemStack t,byte mode){
-        if (!AE2UELWirelessUniversalTerminal.proxy.getAllModeSet().contains(mode) || !t.hasTagCompound())return false;
-        for (int m : t.getTagCompound().getIntArray("modes")){
-            if (m == mode)return true;
+    public boolean hasMode(ItemStack t, byte mode) {
+        if (!AE2UELWirelessUniversalTerminal.proxy.getAllModeSet().contains(mode) || !t.hasTagCompound()) return false;
+        for (int m : t.getTagCompound().getIntArray("modes")) {
+            if (m == mode) return true;
         }
         return false;
     }

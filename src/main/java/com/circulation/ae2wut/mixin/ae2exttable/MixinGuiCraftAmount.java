@@ -34,7 +34,7 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
         super(container);
     }
 
-    @Inject(method="initGui", at=@At(value="RETURN"), remap=true)
+    @Inject(method = "initGui", at = @At(value = "RETURN"), remap = true)
     private void onInitGui(CallbackInfo ci) {
         Object target = ((AEBaseContainer) this.inventorySlots).getTarget();
         if (target instanceof WirelessTerminalGuiObject term)
@@ -42,7 +42,7 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
                 ItemStack itemstack = term.getItemStack();
                 if (itemstack.getTagCompound() != null) {
                     switch (itemstack.getTagCompound().getInteger("mode")) {
-                        case 6,7,8,9: {
+                        case 6, 7, 8, 9: {
                             for (Object btn : new ObjectArrayList<>(this.buttonList)) {
                                 if (btn instanceof GuiTabButton b) {
                                     this.buttonList.remove(b);
@@ -57,7 +57,7 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
             }
     }
 
-    @Inject(method="actionPerformed", at = @At(value="INVOKE", target="Lappeng/client/gui/AEBaseGui;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap=true)
+    @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/AEBaseGui;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
     protected void actionPerformedGuiSwitch(GuiButton btn, CallbackInfo ci) {
         if (btn == this.originalGuiBtn && this.ae2WirelessUniversalTerminal$extendedOriginalGui != null) {
             ExtendedTerminalNetworkHandler.instance().sendToServer(new PacketSwitchGui(this.ae2WirelessUniversalTerminal$extendedOriginalGui));

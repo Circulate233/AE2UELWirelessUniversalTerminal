@@ -10,8 +10,8 @@ import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.glodblock.github.loader.FCItems;
 import com.mekeng.github.common.ItemAndBlocks;
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -30,18 +30,18 @@ public class AllWUTRecipe {
 
     static IDefinitions appEngApi = AEApi.instance().definitions();
     static IItems AEItems = appEngApi.items();
-    static ItemStack ItemWireless = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
+    public static ItemStack ItemWireless = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
 
     private static NBTTagCompound getNBT() {
-        NBTTagCompound nbt = Platform.openNbtData(ItemWireless);
-        nbt.setIntArray("modes", AE2UELWirelessUniversalTerminal.proxy.getAllMode());
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setIntArray("modes", itemList.keySet().toIntArray());
         return nbt;
     }
 
     public static final Int2ObjectMap<ItemStack> itemList = getIngredient();
 
     private static Int2ObjectMap<ItemStack> getIngredient() {
-        Int2ObjectMap<ItemStack> map = new Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<ItemStack> map = new Int2ObjectLinkedOpenHashMap<>();
         map.put(1, AEItems.wirelessCraftingTerminal().maybeStack(1).get());
         map.put(2, AEItems.wirelessFluidTerminal().maybeStack(1).get());
         map.put(3, AEItems.wirelessPatternTerminal().maybeStack(1).get());
@@ -80,30 +80,13 @@ public class AllWUTRecipe {
         map.put(9, new ItemStack(ItemRegistry.WIRELESS_ULTIMATE_TERMINAL));
     }
 
-    public static void reciperRegister(){
+    public static void reciperRegister() {
         List<Ingredient> inputs = new ObjectArrayList<>();
-        for (ItemStack item : itemList.values()){
+        for (ItemStack item : itemList.values()) {
             inputs.add(Ingredient.fromStacks(item));
         }
-        GameRegistry.addShapedRecipe(
-                new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME),
-                null,
-                ItemWireless,
-                "ABC",
-                'A', appEngApi.materials().wirelessReceiver().maybeStack(1).get(),
-                'B', appEngApi.parts().terminal().maybeStack(1).get(),
-                'C', appEngApi.blocks().energyCellDense().maybeStack(1).get()
-        );
-        GameRegistry.addShapelessRecipe(
-                new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME + 1),
-                null,
-                ItemWireless,
-                Ingredient.fromItem(AEItems.wirelessTerminal().maybeItem().get())
-        );
         ItemStack ItemWirelessALL = ItemWireless.copy();
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setIntArray("modes",AE2UELWirelessUniversalTerminal.proxy.getAllMode());
-        ItemWirelessALL.setTagCompound(nbt);
+        ItemWirelessALL.setTagCompound(getNBT());
         if (inputs.size() < 10) {
             GameRegistry.addShapelessRecipe(
                     new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME + "all"),
@@ -111,15 +94,33 @@ public class AllWUTRecipe {
                     ItemWirelessALL,
                     inputs.toArray(new Ingredient[0])
             );
-        } else if (Loader.isModLoaded("extendedcrafting")){
-            extendedcraftingRecipe(inputs,ItemWirelessALL);
+        } else if (Loader.isModLoaded("extendedcrafting")) {
+            extendedcraftingRecipe(inputs, ItemWirelessALL);
+        }
+        int[] modes = itemList.keySet().toIntArray();
+        for (int i = 0; i < modes.length - 1; i++) {
+            for (int j = i + 1; j < modes.length; j++) {
+                var out = ItemWireless.copy();
+                int l = modes[i];
+                int ll = modes[j];
+                Platform.openNbtData(out).setIntArray("modes", new int[]{l, ll});
+                GameRegistry.addShapelessRecipe(
+                        new ResourceLocation(
+                                AE2UELWirelessUniversalTerminal.MOD_ID, NAME + i + "_" + j
+                        ),
+                        null,
+                        out,
+                        Ingredient.fromStacks(itemList.get(l)),
+                        Ingredient.fromStacks(itemList.get(ll))
+                );
+            }
         }
     }
 
     @Optional.Method(modid = "extendedcrafting")
-    public static void extendedcraftingRecipe(List<Ingredient> input,ItemStack outpput){
+    public static void extendedcraftingRecipe(List<Ingredient> input, ItemStack outpput) {
         NonNullList<Ingredient> inputs = NonNullList.create();
         inputs.addAll(input);
-        TableRecipeManager.getInstance().addShapeless(outpput,inputs);
+        TableRecipeManager.getInstance().addShapeless(outpput, inputs);
     }
 }

@@ -28,9 +28,10 @@ public abstract class MixinPacketOpenWirelessGui {
     @Shadow
     private AE2ExtendedGUIs gui;
 
-    @Shadow protected abstract void openGui(ItemStack itemStack, int slotIndex, EntityPlayer player, boolean isBauble) throws GridAccessException;
+    @Shadow
+    protected abstract void openGui(ItemStack itemStack, int slotIndex, EntityPlayer player, boolean isBauble) throws GridAccessException;
 
-    @Inject(method = "serverPacketData",at = @At("HEAD"))
+    @Inject(method = "serverPacketData", at = @At("HEAD"))
     public void serverPacketData(INetworkInfo manager, ExtendedTerminalPacket packet, EntityPlayer player, CallbackInfo ci) {
         NonNullList<ItemStack> inventory = player.inventory.mainInventory;
         var mode = ae2WirelessUniversalTerminal$determineMode();
@@ -52,7 +53,7 @@ public abstract class MixinPacketOpenWirelessGui {
     @Optional.Method(modid = "baubles")
     private void r$tryOpenBauble(EntityPlayer player) {
         var mode = ae2WirelessUniversalTerminal$determineMode();
-        for (int i = 0; i< BaublesApi.getBaublesHandler(player).getSlots(); i++) {
+        for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
             ItemStack is = BaublesApi.getBaublesHandler(player).getStackInSlot(i);
             if (is.getItem() instanceof ItemWirelessUniversalTerminal wut && wut.hasMode(is, mode)) {
                 int finalI = i;
@@ -64,7 +65,7 @@ public abstract class MixinPacketOpenWirelessGui {
 
     @Unique
     private byte ae2WirelessUniversalTerminal$determineMode() {
-        return switch (this.gui){
+        return switch (this.gui) {
             case WIRELESS_BASIC_CRAFTING_TERMINAL -> 6;
             case WIRELESS_ADVANCED_CRAFTING_TERMINAL -> 7;
             case WIRELESS_ELITE_CRAFTING_TERMINAL -> 8;

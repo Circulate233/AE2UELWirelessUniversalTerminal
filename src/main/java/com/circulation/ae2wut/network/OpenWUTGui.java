@@ -22,7 +22,7 @@ public class OpenWUTGui implements IMessage, IMessageHandler<OpenWUTGui, IMessag
     public OpenWUTGui() {
     }
 
-    public OpenWUTGui(WirelessTerminalGuiObject obj, byte mode){
+    public OpenWUTGui(WirelessTerminalGuiObject obj, byte mode) {
         this.mode = mode;
         this.isBauble = obj.isBaubleSlot();
         this.slot = (byte) obj.getInventorySlot();
@@ -46,10 +46,10 @@ public class OpenWUTGui implements IMessage, IMessageHandler<OpenWUTGui, IMessag
     public IMessage onMessage(OpenWUTGui message, MessageContext ctx) {
         ItemStack terminal;
         var player = ctx.getServerHandler().player;
-        if (!message.isBauble){
+        if (!message.isBauble) {
             terminal = player.inventory.getStackInSlot(message.slot);
         } else if (Loader.isModLoaded("baubles") && message.isBauble) {
-            terminal = getBaubleItem(player,message.slot);
+            terminal = getBaubleItem(player, message.slot);
         } else {
             terminal = ItemStack.EMPTY;
         }

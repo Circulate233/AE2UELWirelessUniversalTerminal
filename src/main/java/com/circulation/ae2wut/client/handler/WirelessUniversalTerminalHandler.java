@@ -18,23 +18,24 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
+@SideOnly(Side.CLIENT)
 public class WirelessUniversalTerminalHandler {
-
-    public static final WirelessUniversalTerminalHandler INSTANCE = new WirelessUniversalTerminalHandler();
     private GuiScreen gui;
     private final Minecraft mc = FMLClientHandler.instance().getClient();
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
-        if (event.getGui() != null){
-            if (event.getGui() instanceof AEBaseGui){
+        if (event.getGui() != null) {
+            if (event.getGui() instanceof AEBaseGui) {
                 gui = event.getGui();
             } else {
                 gui = null;
             }
-        } else if (gui != null){
+        } else if (gui != null) {
             AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new WirelessTerminalRefresh());
         }
     }
@@ -49,49 +50,39 @@ public class WirelessUniversalTerminalHandler {
     public void onMouseEvent(MouseEvent event) {
         if (mc.player != null && mc.player.isSneaking()) {
             ItemStack stack = mc.player.getHeldItemMainhand();
-            int delta = - Mouse.getEventDWheel();
-            if (delta % 120 == 0){
-                delta = delta / 120 ;
+            int delta = -Mouse.getEventDWheel();
+            if (delta % 120 == 0) {
+                delta = delta / 120;
             }
             if (delta != 0 && stack.getItem() instanceof ItemWirelessUniversalTerminal) {
                 final var tag = stack.getTagCompound();
-                if (tag != null) {
-                    IntList list = null;
-                    if (tag.hasKey("modes")) {
-                        list = new IntArrayList(tag.getIntArray("modes"));
-                        if (!list.contains(0)){
-                            list.add(0);
-                        }
-                    }
-                    if (list != null) {
-                        int[] modes = stack.getTagCompound().getIntArray("modes");
-                        int max = Integer.MIN_VALUE;
-                        for (int mode : modes) {
-                            if (mode > max) max = mode;
-                        }
-                        final int listMax = modes.length > 0 ? max + 1 : 1;
+                if (tag == null) return;
 
-                        int newVal = (tag.getInteger("mode") + delta) % listMax;
+                IntList list;
+                if (tag.hasKey("modes", 11)) {
+                    var modes = tag.getIntArray("modes");
+                    if (modes.length == 0) return;
+                    list = new IntArrayList(modes);
+                    list.rem(0);
+                    if (list.isEmpty()) return;
+                } else
+                    return;
 
-                        while (!list.contains(newVal)) {
-                            if (newVal < 0) {
-                                newVal = newVal + listMax;
-                                break;
-                            }
-                            if (delta > 0){
-                                newVal = (newVal + 1) % listMax;
-                            } else {
-                                newVal = (newVal - 1) % listMax;
-                            }
-                        }
+                int[] modes = list.toIntArray();
 
-                        tag.setInteger("mode", newVal);
-                        mc.player.sendStatusMessage(new TextComponentString(stack.getDisplayName()),true);
-                        AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new UpdateItemModeMessage(mc.player.inventory.currentItem,(byte) newVal,false));
+                int index = list.indexOf(tag.getInteger("mode"));
+                if (index < 0) index = 0;
+                int newVal = Math.floorMod(index + delta, modes.length);
 
-                        event.setCanceled(true);
-                    }
+                if (newVal < 0 || newVal >= modes.length) {
+                    newVal = 0;
                 }
+
+                tag.setInteger("mode", modes[newVal]);
+                mc.player.sendStatusMessage(new TextComponentString(stack.getDisplayName()), true);
+                AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new UpdateItemModeMessage(mc.player.inventory.currentItem, modes[newVal], false));
+
+                event.setCanceled(true);
             }
         }
     }

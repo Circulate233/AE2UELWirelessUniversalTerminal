@@ -16,9 +16,9 @@ public class MixinTerminal {
     @Shadow
     GuiBridge bridge;
 
-    @Inject(method = "getBridge",at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getBridge", at = @At("RETURN"), cancellable = true)
     public void getBridgeMixin(CallbackInfoReturnable<GuiBridge> cir) {
-        if (this.bridge == GuiBridge.GUI_INTERFACE_TERMINAL){
+        if (this.bridge == GuiBridge.GUI_INTERFACE_TERMINAL) {
             cir.setReturnValue(GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL);
         }
     }

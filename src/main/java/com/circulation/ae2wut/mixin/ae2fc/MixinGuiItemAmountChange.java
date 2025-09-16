@@ -25,9 +25,9 @@ public class MixinGuiItemAmountChange extends GuiCraftAmount {
         super(inventoryPlayer, te);
     }
 
-    @Inject(method="initGui", at = @At(value="TAIL"),remap = true)
+    @Inject(method = "initGui", at = @At(value = "TAIL"), remap = true)
     public void onInitGui(CallbackInfo ci) {
-        Object te = ((AEBaseContainer)this.inventorySlots).getTarget();
+        Object te = ((AEBaseContainer) this.inventorySlots).getTarget();
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
             if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {

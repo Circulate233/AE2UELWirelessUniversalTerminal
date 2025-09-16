@@ -22,7 +22,7 @@ public class MixinContainerCraftConfirm extends AEBaseContainer {
         super(ip, myTile, myPart);
     }
 
-    @Inject(method="startJob", at=@At(value="INVOKE", target="Lappeng/container/ContainerOpenContext;getTile()Lnet/minecraft/tileentity/TileEntity;", shift=At.Shift.AFTER), cancellable=true)
+    @Inject(method = "startJob", at = @At(value = "INVOKE", target = "Lappeng/container/ContainerOpenContext;getTile()Lnet/minecraft/tileentity/TileEntity;", shift = At.Shift.AFTER), cancellable = true)
     public void startJobMixin(CallbackInfo ci) {
         TileEntity te = this.getOpenContext().getTile();
         if (te == null) {
@@ -37,4 +37,3 @@ public class MixinContainerCraftConfirm extends AEBaseContainer {
         }
     }
 }
-

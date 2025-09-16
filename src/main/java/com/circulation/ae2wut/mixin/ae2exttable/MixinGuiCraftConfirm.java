@@ -33,8 +33,8 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
     }
 
     @SuppressWarnings("InjectIntoConstructor")
-    @Inject(method="<init>(Lnet/minecraft/entity/player/InventoryPlayer;Lappeng/api/storage/ITerminalHost;)V",
-            at= @At(value = "INVOKE", target = "Lappeng/container/implementations/ContainerCraftConfirm;setGui(Lappeng/client/gui/implementations/GuiCraftConfirm;)V", shift = At.Shift.AFTER))
+    @Inject(method = "<init>(Lnet/minecraft/entity/player/InventoryPlayer;Lappeng/api/storage/ITerminalHost;)V",
+            at = @At(value = "INVOKE", target = "Lappeng/container/implementations/ContainerCraftConfirm;setGui(Lappeng/client/gui/implementations/GuiCraftConfirm;)V", shift = At.Shift.AFTER))
     private void onInit(final InventoryPlayer inventoryPlayer, final ITerminalHost te, CallbackInfo ci) {
         if (te instanceof WirelessTerminalGuiObject term) {
             if (term.getItemStack().getItem() instanceof ItemWirelessUniversalTerminal t) {
@@ -43,7 +43,7 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
         }
     }
 
-    @Inject(method="initGui", at=@At(value="RETURN"), remap=true)
+    @Inject(method = "initGui", at = @At(value = "RETURN"), remap = true)
     private void onInitGui(CallbackInfo ci) {
         if (this.ae2WirelessUniversalTerminal$extendedOriginalGui != null) {
             this.buttonList.remove(null);
@@ -52,7 +52,7 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
         }
     }
 
-    @Inject(method="actionPerformed", at = @At(value="INVOKE", target="Lappeng/client/gui/AEBaseGui;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap=true)
+    @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/AEBaseGui;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
     protected void actionPerformed(GuiButton btn, CallbackInfo ci) {
         if (this.ae2WirelessUniversalTerminal$extendedOriginalGui != null) {
             if (btn == this.cancel) {

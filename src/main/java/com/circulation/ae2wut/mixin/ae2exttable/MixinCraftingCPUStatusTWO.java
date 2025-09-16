@@ -36,7 +36,7 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
     }
 
     @SuppressWarnings("InjectIntoConstructor")
-    @Inject(method="<init>(Lnet/minecraft/entity/player/InventoryPlayer;Lappeng/api/storage/ITerminalHost;)V", at= @At(value = "INVOKE", target = "Lappeng/api/definitions/IDefinitions;parts()Lappeng/api/definitions/IParts;", shift = At.Shift.AFTER))
+    @Inject(method = "<init>(Lnet/minecraft/entity/player/InventoryPlayer;Lappeng/api/storage/ITerminalHost;)V", at = @At(value = "INVOKE", target = "Lappeng/api/definitions/IDefinitions;parts()Lappeng/api/definitions/IParts;", shift = At.Shift.AFTER))
     private void onInit(final InventoryPlayer inventoryPlayer, final ITerminalHost te, CallbackInfo ci) {
         if (te instanceof WirelessTerminalGuiObject wt) {
             ItemStack item = wt.getItemStack();
@@ -53,7 +53,7 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
         }
     }
 
-    @Inject(method = "actionPerformed", at = @At(value="INVOKE", target="Lappeng/client/gui/implementations/GuiCraftingCPU;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift=At.Shift.AFTER), cancellable=true, remap=true)
+    @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/implementations/GuiCraftingCPU;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
     protected void actionPerformed(GuiButton btn, CallbackInfo ci) {
         if (btn == this.originalGuiBtn && this.ae2WirelessUniversalTerminal$extendedOriginalGui != null) {
             ExtendedTerminalNetworkHandler.instance().sendToServer(new PacketSwitchGui(this.ae2WirelessUniversalTerminal$extendedOriginalGui));

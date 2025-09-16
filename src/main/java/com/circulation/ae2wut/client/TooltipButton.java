@@ -45,22 +45,12 @@ public final class TooltipButton extends GuiButton implements ITooltip {
     public void drawButton(@NotNull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             GlStateManager.pushMatrix();
-            mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            int i = this.getHoverState(this.hovered);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-            if (t < 0) {
-                mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
-                this.drawTexturedModalRect(this.x, this.y, 240, 240, 16, 16);
-                mc.getRenderItem().renderItemIntoGUI(iconMap.get(nowGui), this.x, this.y);
-            } else {
-                mc.getRenderItem().renderItemIntoGUI(iconMap.get(this.t), this.x, this.y);
-            }
-
+            mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
+            this.drawTexturedModalRect(this.x, this.y, 240, 240, 16, 16);
+            mc.getRenderItem().renderItemIntoGUI(iconMap.get(t < 0 ? nowGui : this.t), this.x, this.y);
+            
             this.mouseDragged(mc, mouseX, mouseY);
             GlStateManager.popMatrix();
         }

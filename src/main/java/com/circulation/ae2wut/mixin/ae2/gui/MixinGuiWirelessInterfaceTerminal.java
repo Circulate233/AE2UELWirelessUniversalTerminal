@@ -83,16 +83,22 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
                         this.wut$guiItem
                 );
                 this.wut$enableSwitching = false;
+                for (TooltipButton value : this.wut$Map.values()) {
+                    value.drawButton(this.mc, mouseX, mouseY, partialTicks);
+                    this.drawTooltip(value, mouseX, mouseY);
+                }
                 this.wut$t = this.wut$Map.get((byte) -1);
                 this.wut$Map.remove((byte) -1);
                 this.buttonList = new ObjectArrayList<>(this.buttonList);
             } else {
                 this.buttonList.add(this.wut$t);
                 this.wut$t.drawButton(this.mc, mouseX, mouseY, partialTicks);
+                this.drawTooltip(this.wut$t, mouseX, mouseY);
                 for (TooltipButton value : wut$Map.values()) {
+                    this.buttonList.add(value);
                     value.drawButton(this.mc, mouseX, mouseY, partialTicks);
+                    this.drawTooltip(value, mouseX, mouseY);
                 }
-                this.buttonList.addAll(wut$Map.values());
             }
         }
     }

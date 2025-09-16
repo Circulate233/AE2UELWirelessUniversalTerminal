@@ -15,33 +15,34 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class UpdateItemModeMessage implements IMessage {
-    private int slot;
+    private byte slot;
     private byte mode;
     private boolean isBaubles;
 
-    public UpdateItemModeMessage() {}
+    public UpdateItemModeMessage() {
+    }
 
-    public UpdateItemModeMessage(int slot, byte mode,boolean isBaubles) {
-        this.slot = slot;
-        this.mode = mode;
+    public UpdateItemModeMessage(int slot, int mode, boolean isBaubles) {
+        this.slot = (byte) slot;
+        this.mode = (byte) mode;
         this.isBaubles = isBaubles;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        slot = buf.readInt();
+        slot = buf.readByte();
         mode = buf.readByte();
         isBaubles = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(slot);
+        buf.writeByte(slot);
         buf.writeByte(mode);
         buf.writeBoolean(isBaubles);
     }
 
-    public int getSlot(){
+    public int getSlot() {
         return slot;
     }
 
@@ -53,11 +54,11 @@ public class UpdateItemModeMessage implements IMessage {
         return isBaubles;
     }
 
-    public static class Handler implements IMessageHandler<UpdateItemModeMessage, IMessage>{
+    public static class Handler implements IMessageHandler<UpdateItemModeMessage, IMessage> {
 
         @Override
         public IMessage onMessage(UpdateItemModeMessage message, MessageContext ctx) {
-            EntityPlayer player = switch (ctx.side){
+            EntityPlayer player = switch (ctx.side) {
                 case SERVER -> ctx.getServerHandler().player;
                 case CLIENT -> getClientPlayer();
             };
@@ -76,12 +77,12 @@ public class UpdateItemModeMessage implements IMessage {
         }
 
         @Optional.Method(modid = "baubles")
-        private ItemStack getStackInBaubleSlot(EntityPlayer player,int slot){
+        private ItemStack getStackInBaubleSlot(EntityPlayer player, int slot) {
             return slot >= 0 && slot < BaublesApi.getBaublesHandler(player).getSlots() ? BaublesApi.getBaublesHandler(player).getStackInSlot(slot) : ItemStack.EMPTY;
         }
 
         @SideOnly(Side.CLIENT)
-        private EntityPlayer getClientPlayer(){
+        private EntityPlayer getClientPlayer() {
             return Minecraft.getMinecraft().player;
         }
     }

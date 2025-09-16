@@ -34,8 +34,8 @@ public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatu
         super(inventoryPlayer, te);
     }
 
-    @Inject(method = "<init>",at = @At("TAIL"))
-    public void onInit(InventoryPlayer inventoryPlayer, ITerminalHost te, CallbackInfo ci){
+    @Inject(method = "<init>", at = @At("TAIL"))
+    public void onInit(InventoryPlayer inventoryPlayer, ITerminalHost te, CallbackInfo ci) {
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
             if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
@@ -44,7 +44,7 @@ public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatu
         }
     }
 
-    @Inject(method="actionPerformed", at = @At(value= "HEAD"),remap = true)
+    @Inject(method = "actionPerformed", at = @At(value = "HEAD"), remap = true)
     public void onActionPerformed(GuiButton btn, CallbackInfo ci) {
         if (btn == this.originalGuiBtn) {
             if (this.part instanceof WirelessTerminalGuiObject t) {

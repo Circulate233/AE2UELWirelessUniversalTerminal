@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CPacketUseKeybind.Handler.class, remap = false)
 public class MixinCPacketUseKeybindHandler {
 
-    @Inject(method = "onMessage(Lcom/glodblock/github/network/CPacketUseKeybind;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At(value= "HEAD"), cancellable = true)
+    @Inject(method = "onMessage(Lcom/glodblock/github/network/CPacketUseKeybind;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At(value = "HEAD"), cancellable = true)
     public void onMessageMixin(CPacketUseKeybind message, MessageContext ctx, CallbackInfoReturnable<IMessage> cir) {
         final EntityPlayerMP player = ctx.getServerHandler().player;
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
@@ -37,7 +37,7 @@ public class MixinCPacketUseKeybindHandler {
                 }
                 if (is.getItem() instanceof ItemWirelessUniversalTerminal && list != null && list.contains(4)) {
                     int finalI = i;
-                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is,player,4, finalI,false));
+                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, finalI, false));
                     cir.setReturnValue(null);
                     return;
                 }
@@ -49,9 +49,10 @@ public class MixinCPacketUseKeybindHandler {
     }
 
     @Shadow
-    private static void tryOpenBauble(EntityPlayer player){}
+    private static void tryOpenBauble(EntityPlayer player) {
+    }
 
-    @Inject(method="tryOpenBauble", at = @At(value= "HEAD"), cancellable = true)
+    @Inject(method = "tryOpenBauble", at = @At(value = "HEAD"), cancellable = true)
     private static void tryOpenBaubleMixin(EntityPlayer player, CallbackInfo ci) {
         if (Loader.isModLoaded("baubles"))
             aE2UELWirelessUniversalTerminal$d(player, ci);
@@ -59,7 +60,7 @@ public class MixinCPacketUseKeybindHandler {
 
     @Unique
     @Optional.Method(modid = "baubles")
-    private static void aE2UELWirelessUniversalTerminal$d(EntityPlayer player, CallbackInfo ci){
+    private static void aE2UELWirelessUniversalTerminal$d(EntityPlayer player, CallbackInfo ci) {
         for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
             ItemStack is = BaublesApi.getBaublesHandler(player).getStackInSlot(i);
             final var tag = is.getTagCompound();
@@ -70,7 +71,7 @@ public class MixinCPacketUseKeybindHandler {
                 }
                 if (list != null && list.contains(4)) {
                     final int finalI = i;
-                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is,player,4, finalI,true));
+                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, finalI, true));
                     ci.cancel();
                     return;
                 }

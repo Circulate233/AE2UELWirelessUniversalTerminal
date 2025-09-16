@@ -36,6 +36,7 @@ public abstract class MixinPacketTerminalUse extends AppEngPacket {
     @Inject(method = "serverPacketData", at = @At(value = "HEAD"), cancellable = true)
     public void serverPacketDataMixin(INetworkInfo manager, AppEngPacket packet, EntityPlayer player, CallbackInfo ci) {
         int mode = ae2WirelessUniversalTerminal$determineMode();
+        if (mode == -1)return;
         NonNullList<ItemStack> mainInventory = player.inventory.mainInventory;
         for (int i = 0; i < mainInventory.size(); ++i) {
             ItemStack is = mainInventory.get(i);
@@ -62,7 +63,7 @@ public abstract class MixinPacketTerminalUse extends AppEngPacket {
             case WIRELESS_PATTERN_TERMINAL -> 3;
             case WIRELESS_FLUID_TERMINAL -> 2;
             case WIRELESS_INTERFACE_TERMINAL -> 10;
-            default -> 0;
+            default -> -1;
         };
     }
 

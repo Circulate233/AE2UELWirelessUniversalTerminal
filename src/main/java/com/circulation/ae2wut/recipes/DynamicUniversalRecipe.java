@@ -12,13 +12,14 @@ import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.circulation.ae2wut.recipes.AllWUTRecipe.itemList;
 
-public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+public class DynamicUniversalRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
     private final ItemStack inputTerminal = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
     private final ItemStack inputTerminalOut = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
@@ -76,21 +77,20 @@ public class DynamicUniversalRecipe extends net.minecraftforge.registries.IForge
             terminal.setTagCompound(tag);
         }
 
-        NBTTagIntArray modes;
+        int[] modes = null;
         if (tag.hasKey("modes", 11)) {
-            modes = (NBTTagIntArray) tag.getTag("modes");
-        } else {
-            modes = new NBTTagIntArray(new int[0]);
+            modes = tag.getIntArray("modes");
         }
 
-        int[] modesArray = modes.getIntArray();
-        for (int existingMode : modesArray) {
-            if (existingMode == mode) {
-                return ItemStack.EMPTY;
+        if (modes != null) {
+            for (int existingMode : modes) {
+                if (existingMode == mode) {
+                    return ItemStack.EMPTY;
+                }
             }
         }
 
-        int[] newModes = Arrays.copyOf(modesArray, modesArray.length + 1);
+        int[] newModes = Arrays.copyOf(modes, modes.length + 1);
         newModes[newModes.length - 1] = mode;
         tag.setTag("modes", new NBTTagIntArray(newModes));
 
