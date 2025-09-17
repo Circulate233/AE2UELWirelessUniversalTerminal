@@ -99,18 +99,20 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
     @Intrinsic
     @Override
     public void actionPerformed(GuiButton btn) throws IOException {
-        if (btn == this.wut$t) {
-            final boolean newValue = !this.wut$enableSwitching;
-            for (TooltipButton value : wut$Map.values()) {
-                value.visible = newValue;
-            }
-            this.wut$enableSwitching = newValue;
-            return;
-        } else if (wut$Map != null) {
-            for (Byte2ObjectMap.Entry<TooltipButton> entry : wut$Map.byte2ObjectEntrySet()) {
-                if (btn == entry.getValue()) {
-                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(wut$obj, entry.getByteKey());
-                    return;
+        if (wut$isWut) {
+            if (btn == this.wut$t) {
+                final boolean newValue = !this.wut$enableSwitching;
+                for (TooltipButton value : wut$Map.values()) {
+                    value.visible = newValue;
+                }
+                this.wut$enableSwitching = newValue;
+                return;
+            } else if (wut$Map != null) {
+                for (Byte2ObjectMap.Entry<TooltipButton> entry : wut$Map.byte2ObjectEntrySet()) {
+                    if (btn == entry.getValue()) {
+                        AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(wut$obj, entry.getByteKey());
+                        return;
+                    }
                 }
             }
         }

@@ -79,6 +79,7 @@ public class MixinGuiCraftingTerm extends GuiMEMonitorableTwo {
 
     @Inject(method = "actionPerformed", at = @At("HEAD"), cancellable = true)
     public void swtichDisplay(GuiButton btn, CallbackInfo ci) {
+        if (!wut$isWut) return;
         if (btn == this.wut$t) {
             final boolean newValue = !this.wut$enableSwitching;
             for (TooltipButton value : wut$Map.values()) {
