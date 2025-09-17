@@ -56,18 +56,12 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
         this.wut$guiItem = ItemStack.EMPTY;
     }
 
-    @Inject(method = "drawBG", at = @At("TAIL"), remap = false)
-    public void drawBGI(int offsetX, int offsetY, int mouseX, int mouseY, CallbackInfo ci) {
-        if (wut$enableSwitching)
-            GuiHandler.drawGui(this, this.wut$t.x - 80, this.wut$t.y);
-    }
-
     @Intrinsic
     @Override
     public List<Rectangle> getJEIExclusionArea() {
         var out = super.getJEIExclusionArea();
         if (wut$enableSwitching)
-            out.add(GuiHandler.getRectangle(this.wut$t.x - 80, this.wut$t.y));
+            out.addAll(GuiHandler.getRectangle(wut$Map));
         return out;
     }
 

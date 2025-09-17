@@ -70,16 +70,10 @@ public abstract class MixinGuiMEMonitorable extends AEBaseMEGui {
         }
     }
 
-    @Inject(method = "drawBG", at = @At("TAIL"), remap = false)
-    public void drawBGI(int offsetX, int offsetY, int mouseX, int mouseY, CallbackInfo ci) {
-        if (wut$enableSwitching)
-            GuiHandler.drawGui(this, this.wut$t.x - 80, this.wut$t.y);
-    }
-
     @Inject(method = "getJEIExclusionArea", at = @At("RETURN"), remap = false)
     public void getJEIExclusionArea(CallbackInfoReturnable<List<Rectangle>> cir) {
         if (wut$enableSwitching)
-            cir.getReturnValue().add(GuiHandler.getRectangle(this.wut$t.x - 80, this.wut$t.y));
+            cir.getReturnValue().addAll(GuiHandler.getRectangle(wut$Map));
     }
 
     @Inject(method = "actionPerformed", at = @At("HEAD"), cancellable = true)

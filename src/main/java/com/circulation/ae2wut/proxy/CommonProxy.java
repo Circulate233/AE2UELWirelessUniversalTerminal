@@ -29,9 +29,6 @@ public class CommonProxy implements IGuiHandler {
 
     protected static final Byte2ObjectMap<AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer>> ContainerMap = new Byte2ObjectLinkedOpenHashMap<>();
 
-    public CommonProxy() {
-    }
-
     public void construction() {
 
     }

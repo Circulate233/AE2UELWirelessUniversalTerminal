@@ -2,6 +2,7 @@ package com.circulation.ae2wut.client.handler;
 
 import appeng.client.gui.AEBaseGui;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
+import com.circulation.ae2wut.handler.GuiHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.network.UpdateItemModeMessage;
 import com.circulation.ae2wut.network.WirelessTerminalRefresh;
@@ -35,8 +36,11 @@ public class WirelessUniversalTerminalHandler {
             } else {
                 gui = null;
             }
-        } else if (gui != null) {
-            AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new WirelessTerminalRefresh());
+        } else {
+            GuiHandler.clearCache();
+            if (gui != null) {
+                AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new WirelessTerminalRefresh());
+            }
         }
     }
 

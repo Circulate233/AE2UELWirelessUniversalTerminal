@@ -6,66 +6,6 @@
   "overrides": [
     {
       "predicate": {
-        "mode": 1
-      },
-      "model": "appliedenergistics2:item/wireless_crafting_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 2
-      },
-      "model": "appliedenergistics2:item/wireless_fluid_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 3
-      },
-      "model": "appliedenergistics2:item/wireless_pattern_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 4
-      },
-      "model": "ae2fc:item/wireless_fluid_pattern_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 5
-      },
-      "model": "mekeng:item/wireless_gas_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 6
-      },
-      "model": "ae2exttable:item/wireless_basic_crafting_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 7
-      },
-      "model": "ae2exttable:item/wireless_advanced_crafting_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 8
-      },
-      "model": "ae2exttable:item/wireless_elite_crafting_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 9
-      },
-      "model": "ae2exttable:item/wireless_ultimate_crafting_terminal"
-    },
-    {
-      "predicate": {
-        "mode": 10
-      },
-      "model": "appliedenergistics2:item/wireless_interface_terminal"
-    },
-    {
-      "predicate": {
         "mode": 114514
       },
       "model": "ae2wut:item/wireless_nova_terminal"

@@ -3,6 +3,7 @@ package com.circulation.ae2wut.proxy;
 import appeng.client.gui.AEBaseGui;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.handler.WirelessUniversalTerminalHandler;
+import com.circulation.ae2wut.client.model.WUTModelLoader;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
@@ -10,6 +11,7 @@ import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.Nullable;
@@ -17,9 +19,6 @@ import org.jetbrains.annotations.Nullable;
 public class ClientProxy extends CommonProxy {
 
     protected static final Byte2ObjectMap<AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseGui>> GuiMap = new Byte2ObjectOpenHashMap<>();
-
-    public ClientProxy() {
-    }
 
     @Override
     public void construction() {
@@ -30,6 +29,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit() {
         super.preInit();
         MinecraftForge.EVENT_BUS.register(new WirelessUniversalTerminalHandler());
+        ModelLoaderRegistry.registerLoader(new WUTModelLoader());
     }
 
     @Override

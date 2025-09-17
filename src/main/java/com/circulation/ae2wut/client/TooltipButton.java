@@ -4,6 +4,7 @@ import appeng.client.gui.widgets.ITooltip;
 import com.circulation.ae2wut.handler.GuiHandler;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,9 +16,16 @@ import org.jetbrains.annotations.NotNull;
 
 @SideOnly(Side.CLIENT)
 public final class TooltipButton extends GuiButton implements ITooltip {
+    @Getter
+    private static final Byte2ObjectMap<ItemStack> iconMap;
+
     private final byte t;
-    private static final Byte2ObjectMap<ItemStack> iconMap = new Byte2ObjectOpenHashMap<>();
     private byte nowGui;
+
+    static {
+        iconMap = new Byte2ObjectOpenHashMap<>();
+        iconMap.defaultReturnValue(ItemStack.EMPTY);
+    }
 
     public TooltipButton(int x, int y,byte t) {
         super(0, x, y, "");

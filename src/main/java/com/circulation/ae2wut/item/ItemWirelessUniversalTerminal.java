@@ -98,7 +98,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
 
     @Override
     public boolean canHandle(ItemStack is) {
-        return is.getItem() == INSTANCE;
+        return is.getItem() == this;
     }
 
     @Nonnull
@@ -135,7 +135,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public void nbtChangeB(EntityPlayer player) {
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             ItemStack item = player.inventory.getStackInSlot(i);
-            if (item.hasTagCompound() && item.getItem() == INSTANCE) {
+            if (item.hasTagCompound() && item.getItem() == this) {
                 nbtChangeB(item);
             }
         }
@@ -148,7 +148,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public void baublesNBTB(EntityPlayer player) {
         for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
             ItemStack item = BaublesApi.getBaublesHandler(player).getStackInSlot(i);
-            if (item.hasTagCompound() && item.getItem() == INSTANCE) {
+            if (item.hasTagCompound() && item.getItem() == this) {
                 nbtChangeB(item);
             }
         }

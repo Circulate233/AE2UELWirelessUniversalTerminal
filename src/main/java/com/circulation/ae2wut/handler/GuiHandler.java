@@ -2,16 +2,18 @@ package com.circulation.ae2wut.handler;
 
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.TooltipButton;
+import com.mojang.realmsclient.util.Pair;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
 import java.util.List;
+import java.util.Map;
 
 public class GuiHandler {
     public static final ResourceLocation wut$guiRl = new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, "textures/gui/control.png");
@@ -50,16 +52,26 @@ public class GuiHandler {
         return top;
     }
 
-    private static final int width = 72;
-    private static final int height = 94;
+    private static Pair<Map<?, ?>, List<Rectangle>> rectanglePair;
 
-    public static void drawGui(GuiScreen gui, int x, int y) {
-//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-//        gui.mc.getTextureManager().bindTexture(wut$guiRl);
-//        gui.drawTexturedModalRect(x, y - 6, 0, 0, width, height);
+    public static void clearCache(){
+        if (rectanglePair != null){
+            rectanglePair.second().clear();
+            rectanglePair.first().clear();
+            rectanglePair = null;
+        }
     }
 
-    public static Rectangle getRectangle(int x, int y) {
-        return new Rectangle(x, y, width, height);
+    public static List<Rectangle> getRectangle(Byte2ObjectMap<TooltipButton> map) {
+        if (rectanglePair == null || rectanglePair.first() != map) {
+            List<Rectangle> list = new ObjectArrayList<>();
+            for (TooltipButton value : map.values()) {
+                list.add(new Rectangle(value.x, value.y, value.width, value.height));
+            }
+            rectanglePair = Pair.of(map, list);
+            return list;
+        } else {
+            return rectanglePair.second();
+        }
     }
 }
