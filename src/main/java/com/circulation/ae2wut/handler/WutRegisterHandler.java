@@ -25,7 +25,7 @@ import com._0xc4de.ae2exttable.client.gui.wireless.GuiWirelessEliteCraftingTerm;
 import com._0xc4de.ae2exttable.client.gui.wireless.GuiWirelessUltimateCraftingTerm;
 import com._0xc4de.ae2exttable.items.ItemRegistry;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
-import com.circulation.ae2wut.client.TooltipButton;
+import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import com.glodblock.github.client.GuiWirelessFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerWirelessFluidPatternTerminal;
 import com.glodblock.github.loader.FCItems;
@@ -175,7 +175,7 @@ public class WutRegisterHandler {
         }
 
         private static void regIcon(int id, ItemStack icon) {
-            TooltipButton.regIcon((byte) id, icon);
+            ItemWUTBakedModel.regIcon((byte) id, icon);
         }
 
         public static void registerAllGui() {

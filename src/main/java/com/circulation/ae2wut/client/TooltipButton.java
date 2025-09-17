@@ -1,31 +1,21 @@
 package com.circulation.ae2wut.client;
 
 import appeng.client.gui.widgets.ITooltip;
+import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import com.circulation.ae2wut.handler.GuiHandler;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
-import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 @SideOnly(Side.CLIENT)
 public final class TooltipButton extends GuiButton implements ITooltip {
-    @Getter
-    private static final Byte2ObjectMap<ItemStack> iconMap;
 
     private final byte t;
     private byte nowGui;
-
-    static {
-        iconMap = new Byte2ObjectOpenHashMap<>();
-        iconMap.defaultReturnValue(ItemStack.EMPTY);
-    }
 
     public TooltipButton(int x, int y,byte t) {
         super(0, x, y, "");
@@ -46,10 +36,6 @@ public final class TooltipButton extends GuiButton implements ITooltip {
         }
     }
 
-    public static void regIcon(byte id,ItemStack icon){
-        iconMap.put(id,icon);
-    }
-
     public void drawButton(@NotNull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             GlStateManager.pushMatrix();
@@ -57,16 +43,15 @@ public final class TooltipButton extends GuiButton implements ITooltip {
 
             mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
             this.drawTexturedModalRect(this.x, this.y, 240, 240, 16, 16);
-            mc.getRenderItem().renderItemIntoGUI(iconMap.get(t < 0 ? nowGui : this.t), this.x, this.y);
-            
+            this.drawTexturedModalRect(this.x, this.y, ((t < 0 ? nowGui : this.t) - 1) * 16, 0, 16, 16);
+
             this.mouseDragged(mc, mouseX, mouseY);
             GlStateManager.popMatrix();
         }
-
     }
 
     public String getMessage() {
-        return this.t >= 0 ? iconMap.get(this.t).getDisplayName() : I18n.format("wut.btn.name");
+        return this.t >= 0 ? ItemWUTBakedModel.getIconItem(this.t).getDisplayName() : I18n.format("wut.btn.name");
     }
 
     public int xPos() {

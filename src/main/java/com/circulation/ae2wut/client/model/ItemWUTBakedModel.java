@@ -1,6 +1,7 @@
 package com.circulation.ae2wut.client.model;
 
-import com.circulation.ae2wut.client.TooltipButton;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -22,9 +23,24 @@ import javax.vecmath.Matrix4f;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-class ItemWUTBakedModel implements IBakedModel {
+public class ItemWUTBakedModel implements IBakedModel {
+    private static final Byte2ObjectMap<ItemStack> iconMap;
+
+    static {
+        iconMap = new Byte2ObjectOpenHashMap<>();
+        iconMap.defaultReturnValue(ItemStack.EMPTY);
+    }
+
+    public static ItemStack getIconItem(byte key){
+        return iconMap.get(key);
+    }
+
     private final IBakedModel baseModel;
     private final WutOverrideList overrides;
+
+    public static void regIcon(byte id,ItemStack icon){
+        iconMap.put(id,icon);
+    }
 
     ItemWUTBakedModel(@NotNull IBakedModel baseModel) {
         this.baseModel = baseModel;
@@ -76,7 +92,7 @@ class ItemWUTBakedModel implements IBakedModel {
             if (stack.hasTagCompound() && !stack.getTagCompound().hasKey("Nova")) {
                 byte mode = stack.getTagCompound().getByte("mode");
                 if (mode > 0) {
-                    var icon = TooltipButton.getIconMap().get(mode);
+                    var icon = getIconItem(mode);
                     if (!icon.isEmpty()) {
                         return Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(icon, world, entity);
                     }
