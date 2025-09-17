@@ -84,7 +84,7 @@ public abstract class MixinGuiMEMonitorable extends AEBaseMEGui {
             }
             this.wut$enableSwitching = newValue;
             ci.cancel();
-        } else {
+        } else if (wut$Map != null) {
             for (Byte2ObjectMap.Entry<TooltipButton> entry : wut$Map.byte2ObjectEntrySet()) {
                 if (btn == entry.getValue()) {
                     AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(wut$obj, entry.getByteKey());

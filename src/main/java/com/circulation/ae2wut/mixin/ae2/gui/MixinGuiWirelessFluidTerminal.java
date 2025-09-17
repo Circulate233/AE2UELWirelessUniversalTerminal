@@ -87,7 +87,7 @@ public class MixinGuiWirelessFluidTerminal extends GuiMEPortableFluidCell {
             }
             this.wut$enableSwitching = newValue;
             return;
-        } else {
+        } else if (wut$Map != null) {
             for (Byte2ObjectMap.Entry<TooltipButton> entry : wut$Map.byte2ObjectEntrySet()) {
                 if (btn == entry.getValue()) {
                     AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(wut$obj, entry.getByteKey());
