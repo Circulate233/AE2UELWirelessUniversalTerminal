@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class UpdateItemModeMessage implements IMessage {
+public class UpdateItemModeMessage implements IMessage,IMessageHandler<UpdateItemModeMessage, IMessage> {
     private byte slot;
     private byte mode;
     private boolean isBaubles;
@@ -42,48 +42,33 @@ public class UpdateItemModeMessage implements IMessage {
         buf.writeBoolean(isBaubles);
     }
 
-    public int getSlot() {
-        return slot;
+    @Override
+    public IMessage onMessage(UpdateItemModeMessage message, MessageContext ctx) {
+        EntityPlayer player = switch (ctx.side) {
+            case SERVER -> ctx.getServerHandler().player;
+            case CLIENT -> getClientPlayer();
+        };
+
+        ItemStack stack = ItemStack.EMPTY;
+
+        if (!message.isBaubles)
+            stack = player.inventory.getStackInSlot(message.slot);
+        else if (Loader.isModLoaded("baubles"))
+            stack = getStackInBaubleSlot(player, message.slot);
+
+        if (stack.getItem() instanceof ItemWirelessUniversalTerminal && stack.getTagCompound() != null) {
+            stack.getTagCompound().setInteger("mode", message.mode);
+        }
+        return null;
     }
 
-    public byte getMode() {
-        return mode;
+    @Optional.Method(modid = "baubles")
+    private ItemStack getStackInBaubleSlot(EntityPlayer player, int slot) {
+        return slot >= 0 && slot < BaublesApi.getBaublesHandler(player).getSlots() ? BaublesApi.getBaublesHandler(player).getStackInSlot(slot) : ItemStack.EMPTY;
     }
 
-    public boolean isBaubles() {
-        return isBaubles;
-    }
-
-    public static class Handler implements IMessageHandler<UpdateItemModeMessage, IMessage> {
-
-        @Override
-        public IMessage onMessage(UpdateItemModeMessage message, MessageContext ctx) {
-            EntityPlayer player = switch (ctx.side) {
-                case SERVER -> ctx.getServerHandler().player;
-                case CLIENT -> getClientPlayer();
-            };
-
-            ItemStack stack = ItemStack.EMPTY;
-
-            if (!message.isBaubles())
-                stack = player.inventory.getStackInSlot(message.getSlot());
-            else if (message.isBaubles() && Loader.isModLoaded("baubles"))
-                stack = getStackInBaubleSlot(player, message.getSlot());
-
-            if (stack.getItem() instanceof ItemWirelessUniversalTerminal && stack.getTagCompound() != null) {
-                stack.getTagCompound().setInteger("mode", message.getMode());
-            }
-            return null;
-        }
-
-        @Optional.Method(modid = "baubles")
-        private ItemStack getStackInBaubleSlot(EntityPlayer player, int slot) {
-            return slot >= 0 && slot < BaublesApi.getBaublesHandler(player).getSlots() ? BaublesApi.getBaublesHandler(player).getStackInSlot(slot) : ItemStack.EMPTY;
-        }
-
-        @SideOnly(Side.CLIENT)
-        private EntityPlayer getClientPlayer() {
-            return Minecraft.getMinecraft().player;
-        }
+    @SideOnly(Side.CLIENT)
+    private EntityPlayer getClientPlayer() {
+        return Minecraft.getMinecraft().player;
     }
 }

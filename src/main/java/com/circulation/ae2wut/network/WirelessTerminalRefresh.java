@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class WirelessTerminalRefresh implements IMessage {
+public class WirelessTerminalRefresh implements IMessage,IMessageHandler<WirelessTerminalRefresh, IMessage> {
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -17,12 +17,10 @@ public class WirelessTerminalRefresh implements IMessage {
     public void toBytes(ByteBuf buf) {
     }
 
-    public static class Handler implements IMessageHandler<WirelessTerminalRefresh, IMessage> {
-        @Override
-        public IMessage onMessage(WirelessTerminalRefresh message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
-            player.getServerWorld().addScheduledTask(() -> ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(player));
-            return null;
-        }
+    @Override
+    public IMessage onMessage(WirelessTerminalRefresh message, MessageContext ctx) {
+        EntityPlayerMP player = ctx.getServerHandler().player;
+        player.getServerWorld().addScheduledTask(() -> ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(player));
+        return null;
     }
 }

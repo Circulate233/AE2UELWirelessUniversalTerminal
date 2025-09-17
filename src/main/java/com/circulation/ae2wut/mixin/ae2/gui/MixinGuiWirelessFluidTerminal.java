@@ -9,7 +9,6 @@ import com.circulation.ae2wut.client.TooltipButton;
 import com.circulation.ae2wut.handler.GuiHandler;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
-import com.circulation.ae2wut.network.OpenWUTGui;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -91,7 +90,7 @@ public class MixinGuiWirelessFluidTerminal extends GuiMEPortableFluidCell {
         } else {
             for (Byte2ObjectMap.Entry<TooltipButton> entry : wut$Map.byte2ObjectEntrySet()) {
                 if (btn == entry.getValue()) {
-                    AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new OpenWUTGui(wut$obj, entry.getByteKey()));
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(wut$obj, entry.getByteKey());
                     return;
                 }
             }

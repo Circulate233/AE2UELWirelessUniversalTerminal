@@ -50,7 +50,13 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
 
     private ItemWirelessUniversalTerminal() {
         this.setMaxStackSize(1);
-        this.setCreativeTab(CreativeTab.INSTANCE);
+        this.setCreativeTab(new CreativeTabs(AE2UELWirelessUniversalTerminal.MOD_ID) {
+            @Nonnull
+            @Override
+            public ItemStack createIcon() {
+                return new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
+            }
+        });
         this.setRegistryName(new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME));
         this.setTranslationKey(AE2UELWirelessUniversalTerminal.MOD_ID + '.' + NAME);
         this.addPropertyOverride(new ResourceLocation("mode"), (stack, worldIn, entityIn) -> {

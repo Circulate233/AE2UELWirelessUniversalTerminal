@@ -7,6 +7,7 @@ import appeng.api.features.IWirelessTermRegistry;
 import appeng.client.gui.AEBaseGui;
 import appeng.container.AEBaseContainer;
 import appeng.core.localization.PlayerMessages;
+import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.util.Platform;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.network.OpenWUTGui;
@@ -56,11 +57,11 @@ public class AE2UELWirelessUniversalTerminal {
 
         int start = 0;
 
-        NET_CHANNEL.registerMessage(UpdateItemModeMessage.Handler.class, UpdateItemModeMessage.class, start++, Side.SERVER);
-        NET_CHANNEL.registerMessage(WirelessTerminalRefresh.Handler.class, WirelessTerminalRefresh.class, start++, Side.SERVER);
+        NET_CHANNEL.registerMessage(UpdateItemModeMessage.class, UpdateItemModeMessage.class, start++, Side.SERVER);
+        NET_CHANNEL.registerMessage(WirelessTerminalRefresh.class, WirelessTerminalRefresh.class, start++, Side.SERVER);
         NET_CHANNEL.registerMessage(OpenWUTGui.class, OpenWUTGui.class, start++, Side.SERVER);
 
-        NET_CHANNEL.registerMessage(UpdateItemModeMessage.Handler.class, UpdateItemModeMessage.class, start++, Side.CLIENT);
+        NET_CHANNEL.registerMessage(UpdateItemModeMessage.class, UpdateItemModeMessage.class, start++, Side.CLIENT);
 
         proxy.preInit();
     }
@@ -87,6 +88,11 @@ public class AE2UELWirelessUniversalTerminal {
     @FunctionalInterface
     public interface GetGui<T> {
         T get(ItemStack item, EntityPlayer player, int slot, int isBauble);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void openWirelessTerminalGui(WirelessTerminalGuiObject obj, byte mode) {
+        NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
     }
 
     public static void openWirelessTerminalGui(ItemStack terminal, EntityPlayer player, int mode, int slot, boolean isBauble) {
