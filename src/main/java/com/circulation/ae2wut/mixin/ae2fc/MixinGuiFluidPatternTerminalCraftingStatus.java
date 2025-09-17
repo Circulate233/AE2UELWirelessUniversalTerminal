@@ -4,10 +4,9 @@ import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.implementations.GuiCraftingStatus;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.helpers.WirelessTerminalGuiObject;
+import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.glodblock.github.client.GuiFluidPatternTerminalCraftingStatus;
-import com.glodblock.github.inventory.GuiType;
-import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -50,7 +49,7 @@ public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatu
             if (this.part instanceof WirelessTerminalGuiObject t) {
                 ItemStack tool = t.getItemStack();
                 if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
-                    InventoryHandler.switchGui(GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(t, (byte) 4);
                 }
             }
         }

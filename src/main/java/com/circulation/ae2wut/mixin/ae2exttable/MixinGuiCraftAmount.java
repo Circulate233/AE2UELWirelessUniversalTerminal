@@ -7,8 +7,7 @@ import appeng.container.AEBaseContainer;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com._0xc4de.ae2exttable.client.gui.AE2ExtendedGUIs;
 import com._0xc4de.ae2exttable.items.ItemRegistry;
-import com._0xc4de.ae2exttable.network.ExtendedTerminalNetworkHandler;
-import com._0xc4de.ae2exttable.network.packets.PacketSwitchGui;
+import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.GuiButton;
@@ -28,7 +27,10 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
     private GuiTabButton originalGuiBtn;
 
     @Unique
-    private AE2ExtendedGUIs ae2WirelessUniversalTerminal$extendedOriginalGui;
+    private AE2ExtendedGUIs wut$extendedOriginalGui;
+
+    @Unique
+    private WirelessTerminalGuiObject wut$obj;
 
     public MixinGuiCraftAmount(Container container) {
         super(container);
@@ -48,9 +50,10 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
                                     this.buttonList.remove(b);
                                 }
                             }
-                            this.ae2WirelessUniversalTerminal$extendedOriginalGui = ItemWirelessUniversalTerminal.getGuiType(term.getItemStack());
-                            ItemStack myIcon = new ItemStack(ItemRegistry.partByGuiType(this.ae2WirelessUniversalTerminal$extendedOriginalGui));
+                            this.wut$extendedOriginalGui = ItemWirelessUniversalTerminal.getGuiType(term.getItemStack());
+                            ItemStack myIcon = new ItemStack(ItemRegistry.partByGuiType(this.wut$extendedOriginalGui));
                             this.buttonList.add((this.originalGuiBtn = new GuiTabButton(this.guiLeft + 154, this.guiTop, myIcon, myIcon.getDisplayName(), this.itemRender)));
+                            this.wut$obj = term;
                         }
                     }
                 }
@@ -59,8 +62,8 @@ public abstract class MixinGuiCraftAmount extends AEBaseGui {
 
     @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/AEBaseGui;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
     protected void actionPerformedGuiSwitch(GuiButton btn, CallbackInfo ci) {
-        if (btn == this.originalGuiBtn && this.ae2WirelessUniversalTerminal$extendedOriginalGui != null) {
-            ExtendedTerminalNetworkHandler.instance().sendToServer(new PacketSwitchGui(this.ae2WirelessUniversalTerminal$extendedOriginalGui));
+        if (btn == this.originalGuiBtn && this.wut$extendedOriginalGui != null) {
+            AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.wut$obj,ItemWirelessUniversalTerminal.getAE2EMode(this.wut$extendedOriginalGui));
             ci.cancel();
         }
     }

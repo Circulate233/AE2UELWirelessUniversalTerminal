@@ -36,8 +36,7 @@ public class MixinCPacketUseKeybindHandler {
                     list = new IntArrayList(tag.getIntArray("modes"));
                 }
                 if (is.getItem() instanceof ItemWirelessUniversalTerminal && list != null && list.contains(4)) {
-                    int finalI = i;
-                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, finalI, false));
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, i, false);
                     cir.setReturnValue(null);
                     return;
                 }
@@ -70,8 +69,7 @@ public class MixinCPacketUseKeybindHandler {
                     list = new IntArrayList(tag.getIntArray("modes"));
                 }
                 if (list != null && list.contains(4)) {
-                    final int finalI = i;
-                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, finalI, true));
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, i, true);
                     ci.cancel();
                     return;
                 }

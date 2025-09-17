@@ -8,17 +8,21 @@ import appeng.client.gui.AEBaseGui;
 import appeng.container.AEBaseContainer;
 import appeng.core.localization.PlayerMessages;
 import appeng.helpers.WirelessTerminalGuiObject;
-import appeng.util.Platform;
+import baubles.api.BaublesApi;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.network.OpenWUTGui;
 import com.circulation.ae2wut.network.UpdateItemModeMessage;
 import com.circulation.ae2wut.network.WirelessTerminalRefresh;
 import com.circulation.ae2wut.proxy.ClientProxy;
 import com.circulation.ae2wut.proxy.CommonProxy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.LogWrapper;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -92,11 +96,26 @@ public class AE2UELWirelessUniversalTerminal {
 
     @SideOnly(Side.CLIENT)
     public static void openWirelessTerminalGui(WirelessTerminalGuiObject obj, byte mode) {
-        NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
+        ItemStack stack = ItemStack.EMPTY;
+        if (!obj.isBaubleSlot()) {
+            stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(obj.getInventorySlot());
+        } else if (Loader.isModLoaded("baubles") && obj.isBaubleSlot()) {
+            stack = getBaubleItem(Minecraft.getMinecraft().player, obj.getInventorySlot());
+        }
+        if (!stack.isEmpty()) {
+            ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stack);
+            ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stack, mode);
+            NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
+        }
+    }
+
+    @Optional.Method(modid = "baubles")
+    public static ItemStack getBaubleItem(EntityPlayer player, int slot) {
+        return BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
     }
 
     public static void openWirelessTerminalGui(ItemStack terminal, EntityPlayer player, int mode, int slot, boolean isBauble) {
-        if (!Platform.isClient()) {
+        if (player instanceof EntityPlayerMP playerMP) {
             IWirelessTermRegistry registry = AEApi.instance().registries().wireless();
             if (!registry.isWirelessTerminal(terminal)) {
                 player.sendMessage(PlayerMessages.DeviceNotWirelessTerminal.get());
@@ -112,9 +131,11 @@ public class AE2UELWirelessUniversalTerminal {
                         player.sendMessage(PlayerMessages.StationCanNotBeLocated.get());
                     } else {
                         if (handler.hasPower(player, 0.5F, terminal)) {
-                            ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(terminal);
-                            ItemWirelessUniversalTerminal.INSTANCE.nbtChange(terminal, (byte) mode);
-                            player.openGui(AE2UELWirelessUniversalTerminal.instance, mode, player.world, slot, isBauble ? 1 : 0, Integer.MIN_VALUE);
+                            playerMP.getServer().addScheduledTask(() -> {
+                                ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(terminal);
+                                ItemWirelessUniversalTerminal.INSTANCE.nbtChange(terminal, (byte) mode);
+                                player.openGui(AE2UELWirelessUniversalTerminal.instance, mode, player.world, slot, isBauble ? 1 : 0, Integer.MIN_VALUE);
+                            });
                         } else {
                             player.sendMessage(PlayerMessages.DeviceNotPowered.get());
                         }
@@ -123,5 +144,4 @@ public class AE2UELWirelessUniversalTerminal {
             }
         }
     }
-
 }

@@ -122,7 +122,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     }
 
     public void nbtChange(ItemStack item, byte mode) {
-        final var tag = item.getTagCompound();
+        final var tag = Platform.openNbtData(item);
         tag.setByte("mode", mode);
         if (secure.contains(mode)) return;
         tag.setInteger("craft", 1);
@@ -301,6 +301,17 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
             case 8 -> AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
             case 9 -> AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
             default -> null;
+        };
+    }
+
+    @Optional.Method(modid = "ae2exttable")
+    public static byte getAE2EMode(AE2ExtendedGUIs value) {
+        return switch (value) {
+            case WIRELESS_BASIC_CRAFTING_TERMINAL -> 6;
+            case WIRELESS_ADVANCED_CRAFTING_TERMINAL -> 7;
+            case WIRELESS_ELITE_CRAFTING_TERMINAL -> 8;
+            case WIRELESS_ULTIMATE_CRAFTING_TERMINAL -> 9;
+            default -> 0;
         };
     }
 

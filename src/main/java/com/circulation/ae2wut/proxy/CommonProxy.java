@@ -5,7 +5,6 @@ import appeng.api.config.Upgrades;
 import appeng.api.util.AEPartLocation;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
-import baubles.api.BaublesApi;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.handler.WirelessUniversalTerminalHandler;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
@@ -20,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +53,7 @@ public class CommonProxy implements IGuiHandler {
         if (y == 0) {
             terminal = player.inventory.getStackInSlot(x);
         } else if (Loader.isModLoaded("baubles") && y == 1) {
-            terminal = getBaubleItem(player, x);
+            terminal = AE2UELWirelessUniversalTerminal.getBaubleItem(player, x);
         } else {
             terminal = ItemStack.EMPTY;
         }
@@ -84,11 +82,6 @@ public class CommonProxy implements IGuiHandler {
     @Override
     public @Nullable Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         return null;
-    }
-
-    @Optional.Method(modid = "baubles")
-    protected ItemStack getBaubleItem(EntityPlayer player, int slot) {
-        return BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
     }
 
     public void registryContainer(byte id, AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer> function) {

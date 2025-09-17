@@ -50,7 +50,7 @@ public class ClientProxy extends CommonProxy {
         if (y == 0) {
             terminal = player.inventory.getStackInSlot(x);
         } else if (Loader.isModLoaded("baubles") && y == 1) {
-            terminal = getBaubleItem(player, x);
+            terminal = AE2UELWirelessUniversalTerminal.getBaubleItem(player, x);
         } else {
             terminal = ItemStack.EMPTY;
         }

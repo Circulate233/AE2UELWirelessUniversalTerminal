@@ -6,8 +6,7 @@ import appeng.client.gui.implementations.GuiCraftingStatus;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com._0xc4de.ae2exttable.client.gui.AE2ExtendedGUIs;
-import com._0xc4de.ae2exttable.network.ExtendedTerminalNetworkHandler;
-import com._0xc4de.ae2exttable.network.packets.PacketSwitchGui;
+import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -19,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value=GuiCraftingStatus.class, remap=false)
+@Mixin(value = GuiCraftingStatus.class, remap = false)
 public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
 
     @Shadow
@@ -29,7 +28,10 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
     private GuiTabButton originalGuiBtn;
 
     @Unique
-    private AE2ExtendedGUIs ae2WirelessUniversalTerminal$extendedOriginalGui;
+    private AE2ExtendedGUIs wut$extendedOriginalGui;
+
+    @Unique
+    private WirelessTerminalGuiObject wut$obj;
 
     public MixinCraftingCPUStatusTWO(InventoryPlayer inventoryPlayer, Object te) {
         super(inventoryPlayer, te);
@@ -45,8 +47,9 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
                     byte mode = item.getTagCompound().getByte("mode");
                     var gui = ItemWirelessUniversalTerminal.getGui(mode);
                     if (gui != null) {
-                        this.ae2WirelessUniversalTerminal$extendedOriginalGui = gui;
+                        this.wut$extendedOriginalGui = gui;
                         this.myIcon = item;
+                        this.wut$obj = wt;
                     }
                 }
             }
@@ -55,8 +58,8 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
 
     @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/implementations/GuiCraftingCPU;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
     protected void actionPerformed(GuiButton btn, CallbackInfo ci) {
-        if (btn == this.originalGuiBtn && this.ae2WirelessUniversalTerminal$extendedOriginalGui != null) {
-            ExtendedTerminalNetworkHandler.instance().sendToServer(new PacketSwitchGui(this.ae2WirelessUniversalTerminal$extendedOriginalGui));
+        if (btn == this.originalGuiBtn && this.wut$extendedOriginalGui != null) {
+            AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.wut$obj,ItemWirelessUniversalTerminal.getAE2EMode(this.wut$extendedOriginalGui));
             ci.cancel();
         }
     }

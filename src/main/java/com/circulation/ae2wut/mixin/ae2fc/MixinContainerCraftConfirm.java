@@ -4,9 +4,8 @@ import appeng.api.parts.IPart;
 import appeng.container.AEBaseContainer;
 import appeng.container.implementations.ContainerCraftConfirm;
 import appeng.container.interfaces.IInventorySlotAware;
+import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
-import com.glodblock.github.inventory.GuiType;
-import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -30,7 +29,7 @@ public class MixinContainerCraftConfirm extends AEBaseContainer {
                 if (this.obj.getItemStack().getTagCompound().getInteger("mode") == 4) {
                     IInventorySlotAware i = ((IInventorySlotAware) this.obj);
                     EntityPlayer player = this.getInventoryPlayer().player;
-                    Util.openWirelessTerminal(this.obj.getItemStack(), i.getInventorySlot(), i.isBaubleSlot(), player.world, player, GuiType.WIRELESS_FLUID_PATTERN_TERMINAL);
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.obj.getItemStack(),player,4,((IInventorySlotAware) this.obj).getInventorySlot(),((IInventorySlotAware) this.obj).isBaubleSlot());
                     ci.cancel();
                 }
             }

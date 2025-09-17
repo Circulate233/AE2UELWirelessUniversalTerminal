@@ -47,8 +47,7 @@ public abstract class MixinPacketTerminalUse extends AppEngPacket {
                     list = new IntArrayList(tag.getIntArray("modes"));
                 }
                 if (list != null && list.contains(mode)) {
-                    int finalI = i;
-                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, mode, finalI, false));
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, mode, i, false);
                     ci.cancel();
                     return;
                 }
@@ -86,8 +85,7 @@ public abstract class MixinPacketTerminalUse extends AppEngPacket {
                     list = new IntArrayList(tag.getIntArray("modes"));
                 }
                 if (list != null && list.contains(mode)) {
-                    int finalI = i;
-                    player.getServer().addScheduledTask(() -> AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, mode, finalI, true));
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, mode, i, true);
                     ci.cancel();
                     return;
                 }
