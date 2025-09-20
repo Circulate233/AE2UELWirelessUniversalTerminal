@@ -6,6 +6,7 @@ import appeng.util.Platform;
 import baubles.api.BaublesApi;
 import com._0xc4de.ae2exttable.client.gui.AE2ExtendedGUIs;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
+import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
 import it.unimi.dsi.fastutil.bytes.ByteSet;
 import net.minecraft.client.resources.I18n;
@@ -112,13 +113,10 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             if (stack.hasTagCompound()) {
-                return (I18n.format(this.getUnlocalizedNameInefficiently(stack) + ".name").trim() + getWirelessName(stack.getTagCompound().getByte("mode"))).trim();
-            } else {
-                return super.getItemStackDisplayName(stack);
+                return (super.getItemStackDisplayName(stack).trim() + getWirelessName(stack.getTagCompound().getByte("mode"))).trim();
             }
-        } else {
-            return super.getItemStackDisplayName(stack);
         }
+        return super.getItemStackDisplayName(stack);
     }
 
     public void nbtChange(ItemStack item, byte mode) {
@@ -209,29 +207,12 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
 
     @SideOnly(Side.CLIENT)
     public static String getWirelessName(int value) {
-        return switch (value) {
-            case 1 -> getString("item.appliedenergistics2.wireless_crafting_terminal.name");
-            case 2 -> getString("item.appliedenergistics2.wireless_fluid_terminal.name");
-            case 3 -> getString("item.appliedenergistics2.wireless_pattern_terminal.name");
-            case 4 -> getString("item.ae2fc:wireless_fluid_pattern_terminal.name");
-            case 5 -> getString("item.mekeng:wireless_gas_terminal.name");
-            case 6 -> getString("item.ae2exttable.wireless_basic_crafting_terminal.name");
-            case 7 -> getString("item.ae2exttable.wireless_advanced_crafting_terminal.name");
-            case 8 -> getString("item.ae2exttable.wireless_elite_crafting_terminal.name");
-            case 9 -> getString("item.ae2exttable.wireless_ultimate_crafting_terminal.name");
-            case 10 -> getString("item.appliedenergistics2.wireless_interface_terminal.name");
-            default -> "";
-        };
+        return "§6(" + ItemWUTBakedModel.getIconItem((byte) value).getDisplayName() + ")";
     }
 
     @Override
     public boolean willAutoSync(ItemStack stack, EntityLivingBase player) {
         return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static String getString(String value) {
-        return "§6(" + I18n.format(value) + ")";
     }
 
     @SideOnly(Side.CLIENT)

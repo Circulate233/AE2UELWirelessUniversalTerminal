@@ -55,7 +55,7 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
         }
     }
 
-    @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/AEBaseGui;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
+    @Inject(method = "actionPerformed", at = @At("HEAD"), cancellable = true, remap = true)
     protected void actionPerformed(GuiButton btn, CallbackInfo ci) {
         if (this.wut$extendedOriginalGui != null) {
             if (btn == this.cancel) {

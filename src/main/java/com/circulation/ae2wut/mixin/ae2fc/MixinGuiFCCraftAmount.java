@@ -39,6 +39,7 @@ public class MixinGuiFCCraftAmount extends GuiCraftAmount {
                 this.originGui = GuiType.WIRELESS_FLUID_PATTERN_TERMINAL;
             }
             if (!icon.isEmpty() && this.originGui != null) {
+                this.originalGuiBtn.visible = false;
                 this.buttonList.remove(this.originalGuiBtn);
                 this.buttonList.add(this.originalGuiBtn = new GuiTabButton(this.guiLeft + 154, this.guiTop, icon, icon.getDisplayName(), this.itemRender));
                 ci.cancel();
