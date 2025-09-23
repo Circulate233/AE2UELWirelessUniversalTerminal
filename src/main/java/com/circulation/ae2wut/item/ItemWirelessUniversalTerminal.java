@@ -249,7 +249,7 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
                 case 2 -> GuiBridge.GUI_WIRELESS_FLUID_TERMINAL;
                 case 3 -> GuiBridge.GUI_WIRELESS_PATTERN_TERMINAL;
                 case 10 -> GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL;
-                default -> null;
+                default -> GuiBridge.GUI_WIRELESS_TERM;
             };
         }
         return null;

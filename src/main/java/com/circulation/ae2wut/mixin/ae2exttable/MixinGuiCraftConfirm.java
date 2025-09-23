@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(value = GuiCraftConfirm.class, remap = false)
 public abstract class MixinGuiCraftConfirm extends AEBaseGui {
 
@@ -49,10 +51,14 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
     @Inject(method = "initGui", at = @At(value = "RETURN"), remap = true)
     private void onInitGui(CallbackInfo ci) {
         if (this.wut$extendedOriginalGui != null) {
-            this.buttonList.remove(null);
+            if (this.cancel != null) {
+                this.cancel.visible = false;
+                this.buttonList.remove(this.cancel);
+            }
             this.cancel = new GuiButton(0, this.guiLeft + 6, this.guiTop + this.ySize - 25, 50, 20, GuiText.Cancel.getLocal());
             this.buttonList.add(this.cancel);
         }
+        this.buttonList.removeIf(Objects::isNull);
     }
 
     @Inject(method = "actionPerformed", at = @At("HEAD"), cancellable = true, remap = true)

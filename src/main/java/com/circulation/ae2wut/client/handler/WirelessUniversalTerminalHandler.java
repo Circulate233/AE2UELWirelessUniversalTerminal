@@ -2,6 +2,7 @@ package com.circulation.ae2wut.client.handler;
 
 import appeng.client.gui.AEBaseGui;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
+import com.circulation.ae2wut.client.model.WUTModelLoader;
 import com.circulation.ae2wut.handler.GuiHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.network.UpdateItemModeMessage;
@@ -17,6 +18,7 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -48,6 +50,7 @@ public class WirelessUniversalTerminalHandler {
     public void registerModels(ModelRegistryEvent event) {
         ItemWirelessUniversalTerminal item = ItemWirelessUniversalTerminal.INSTANCE;
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+        ModelLoaderRegistry.registerLoader(new WUTModelLoader());
     }
 
     @SubscribeEvent
