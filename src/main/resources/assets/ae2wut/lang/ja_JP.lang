@@ -1,0 +1,12 @@
+item.ae2wut.wireless_universal_terminal.name=ワイヤレスユニバーサルターミナル
+
+item.wut.tooltip=§9Shiftを押しながらスクロールでモード切替
+item.wut.tooltip1=§9元のターミナルのショートカットをサポート
+item.wut.tooltip2=§6詳細は§lSHIFT§r§6を押したまま表示
+
+item.wut.shift_tooltip=§b統合済みのターミナル:
+item.wut.shift_tooltip1=§7なし
+
+wut.btn.name=ターミナルを選択
+
+itemGroup.ae2wut=ワイヤレスユニバーサルターミナル
