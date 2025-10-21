@@ -65,7 +65,6 @@ public class AE2UELWirelessUniversalTerminal {
             stack = getBaubleItem(Minecraft.getMinecraft().player, obj.getInventorySlot());
         }
         if (!stack.isEmpty()) {
-            Minecraft.getMinecraft().player.closeScreen();
             ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stack);
             ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stack, mode);
             NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
