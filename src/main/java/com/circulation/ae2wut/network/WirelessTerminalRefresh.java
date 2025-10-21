@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class WirelessTerminalRefresh implements IMessage,IMessageHandler<WirelessTerminalRefresh, IMessage> {
+public class WirelessTerminalRefresh implements IMessage, IMessageHandler<WirelessTerminalRefresh, IMessage> {
 
     @Override
     public void fromBytes(ByteBuf buf) {

@@ -59,7 +59,7 @@ public class MixinCraftingCPUStatusTWO extends GuiCraftingCPU {
     @Inject(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lappeng/client/gui/implementations/GuiCraftingCPU;actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", shift = At.Shift.AFTER), cancellable = true, remap = true)
     protected void actionPerformed(GuiButton btn, CallbackInfo ci) {
         if (btn == this.originalGuiBtn && this.wut$extendedOriginalGui != null) {
-            AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.wut$obj,ItemWirelessUniversalTerminal.getAE2EMode(this.wut$extendedOriginalGui));
+            AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.wut$obj, ItemWirelessUniversalTerminal.getAE2EMode(this.wut$extendedOriginalGui));
             ci.cancel();
         }
     }

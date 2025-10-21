@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class CommonProxy implements IGuiHandler {
 
     protected static final Byte2ObjectMap<AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer>> ContainerMap = new Byte2ObjectLinkedOpenHashMap<>();
+    private final IntSet allModeSet = new IntOpenHashSet();
 
     public void construction() {
 
@@ -87,8 +88,6 @@ public class CommonProxy implements IGuiHandler {
     public void registryContainer(byte id, AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer> function) {
         ContainerMap.put(id, function);
     }
-
-    private final IntSet allModeSet = new IntOpenHashSet();
 
     public IntSet getAllModeSet() {
         if (allModeSet.size() == ContainerMap.size()) {

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(value = CoreModHooks.class,remap = false)
+@Mixin(value = CoreModHooks.class, remap = false)
 public class MixinCoreModHooks {
 
     @Redirect(method = "startJob", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", remap = true))

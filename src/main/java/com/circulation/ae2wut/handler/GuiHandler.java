@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class GuiHandler {
     public static final ResourceLocation wut$guiRl = new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, "textures/gui/control.png");
+    private static Pair<Map<?, ?>, List<Rectangle>> rectanglePair;
 
     public static Byte2ObjectMap<TooltipButton> initGui(int guiTop, int guiLeft, List<GuiButton> buttonList, byte nowGui, ItemStack terminal) {
         final Byte2ObjectMap<TooltipButton> map = new Byte2ObjectOpenHashMap<>();
@@ -52,10 +53,8 @@ public class GuiHandler {
         return top;
     }
 
-    private static Pair<Map<?, ?>, List<Rectangle>> rectanglePair;
-
-    public static void clearCache(){
-        if (rectanglePair != null){
+    public static void clearCache() {
+        if (rectanglePair != null) {
             rectanglePair.second().clear();
             rectanglePair.first().clear();
             rectanglePair = null;

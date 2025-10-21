@@ -44,7 +44,7 @@ public class OpenWUTGui implements IMessage, IMessageHandler<OpenWUTGui, IMessag
 
     @Override
     public IMessage onMessage(OpenWUTGui message, MessageContext ctx) {
-        ItemStack terminal;
+        final ItemStack terminal;
         var player = ctx.getServerHandler().player;
         if (!message.isBauble) {
             terminal = player.inventory.getStackInSlot(message.slot);

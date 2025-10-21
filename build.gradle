@@ -203,9 +203,9 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
 
+    implementation(rfg.deobf("curse.maven:had-enough-items-557549:6963093"))
     implementation(rfg.deobf("curse.maven:baubles-227083:2518667"))
     implementation(rfg.deobf("curse.maven:ae2-extended-life-570458:6302098"))
-    implementation(rfg.deobf("curse.maven:had-enough-items-557549:6963093"))
     implementation(rfg.deobf("curse.maven:mek-268560:2835175"))
     implementation(rfg.deobf("curse.maven:MekanismEnergistics-1027681:5775101"))
     implementation(rfg.deobf("curse.maven:extended-crafting-nomifactory-edition-398267:5778512"))

@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(value = PacketTerminalUse.class,remap = false)
+@Mixin(value = PacketTerminalUse.class, remap = false)
 public abstract class MixinPacketTerminalUse extends AppEngPacket {
 
     @Shadow
@@ -36,7 +36,7 @@ public abstract class MixinPacketTerminalUse extends AppEngPacket {
     @Inject(method = "serverPacketData", at = @At(value = "HEAD"), cancellable = true)
     public void serverPacketDataMixin(INetworkInfo manager, AppEngPacket packet, EntityPlayer player, CallbackInfo ci) {
         int mode = ae2WirelessUniversalTerminal$determineMode();
-        if (mode == -1)return;
+        if (mode == -1) return;
         NonNullList<ItemStack> mainInventory = player.inventory.mainInventory;
         for (int i = 0; i < mainInventory.size(); ++i) {
             ItemStack is = mainInventory.get(i);

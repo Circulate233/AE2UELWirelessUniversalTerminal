@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value= ContainerCraftConfirm.class, remap=false)
+@Mixin(value = ContainerCraftConfirm.class, remap = false)
 public class MixinContainerCraftConfirm extends AEBaseContainer {
 
     public MixinContainerCraftConfirm(InventoryPlayer ip, TileEntity myTile, IPart myPart) {
@@ -29,7 +29,7 @@ public class MixinContainerCraftConfirm extends AEBaseContainer {
                 if (this.obj.getItemStack().getTagCompound().getInteger("mode") == 4) {
                     IInventorySlotAware i = ((IInventorySlotAware) this.obj);
                     EntityPlayer player = this.getInventoryPlayer().player;
-                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.obj.getItemStack(),player,4,((IInventorySlotAware) this.obj).getInventorySlot(),((IInventorySlotAware) this.obj).isBaubleSlot());
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.obj.getItemStack(), player, 4, ((IInventorySlotAware) this.obj).getInventorySlot(), ((IInventorySlotAware) this.obj).isBaubleSlot());
                     ci.cancel();
                 }
             }

@@ -31,20 +31,20 @@ public class ItemWUTBakedModel implements IBakedModel {
         iconMap.defaultReturnValue(ItemStack.EMPTY);
     }
 
-    public static ItemStack getIconItem(byte key){
-        return iconMap.get(key);
-    }
-
     private final IBakedModel baseModel;
     private final WutOverrideList overrides;
-
-    public static void regIcon(byte id,ItemStack icon){
-        iconMap.put(id,icon);
-    }
 
     ItemWUTBakedModel(@NotNull IBakedModel baseModel) {
         this.baseModel = baseModel;
         this.overrides = new WutOverrideList();
+    }
+
+    public static ItemStack getIconItem(byte key) {
+        return iconMap.get(key);
+    }
+
+    public static void regIcon(byte id, ItemStack icon) {
+        iconMap.put(id, icon);
     }
 
     @Override

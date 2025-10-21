@@ -65,7 +65,7 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
     protected void actionPerformed(GuiButton btn, CallbackInfo ci) {
         if (this.wut$extendedOriginalGui != null) {
             if (btn == this.cancel) {
-                AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.wut$obj,ItemWirelessUniversalTerminal.getAE2EMode(this.wut$extendedOriginalGui));
+                AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(this.wut$obj, ItemWirelessUniversalTerminal.getAE2EMode(this.wut$extendedOriginalGui));
                 ci.cancel();
             }
         }

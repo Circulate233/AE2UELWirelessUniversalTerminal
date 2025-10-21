@@ -25,7 +25,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.List;
 
-@Mixin(value = GuiWirelessFluidTerminal.class,remap = false)
+@Mixin(value = GuiWirelessFluidTerminal.class, remap = false)
 public class MixinGuiWirelessFluidTerminal extends GuiMEPortableFluidCell {
 
     @Unique

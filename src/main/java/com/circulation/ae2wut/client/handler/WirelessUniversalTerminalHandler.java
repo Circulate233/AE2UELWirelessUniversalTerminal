@@ -27,8 +27,8 @@ import org.lwjgl.input.Mouse;
 
 @SideOnly(Side.CLIENT)
 public class WirelessUniversalTerminalHandler {
-    private GuiScreen gui;
     private final Minecraft mc = FMLClientHandler.instance().getClient();
+    private GuiScreen gui;
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {

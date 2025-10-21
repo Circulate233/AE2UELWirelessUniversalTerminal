@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class UpdateItemModeMessage implements IMessage,IMessageHandler<UpdateItemModeMessage, IMessage> {
+public class UpdateItemModeMessage implements IMessage, IMessageHandler<UpdateItemModeMessage, IMessage> {
     private byte slot;
     private byte mode;
     private boolean isBaubles;

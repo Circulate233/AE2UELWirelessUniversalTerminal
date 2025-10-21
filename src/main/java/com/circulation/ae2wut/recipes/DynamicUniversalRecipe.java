@@ -21,6 +21,7 @@ import static com.circulation.ae2wut.recipes.AllWUTRecipe.itemList;
 
 public class DynamicUniversalRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
+    public static final List<DynamicUniversalRecipe> RECIPES = registerRecipes();
     private final ItemStack inputTerminal = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
     private final ItemStack inputTerminalOut = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
     private final ItemStack additionalItem;
@@ -34,6 +35,12 @@ public class DynamicUniversalRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
         this.additionalItem = additionalItem;
         this.mode = mode;
         this.setRegistryName(new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, "universal" + mode));
+    }
+
+    private static List<DynamicUniversalRecipe> registerRecipes() {
+        List<DynamicUniversalRecipe> RECIPES = new ObjectArrayList<>();
+        itemList.forEach((mode, item) -> RECIPES.add(new DynamicUniversalRecipe(item, mode)));
+        return RECIPES;
     }
 
     @Override
@@ -118,13 +125,5 @@ public class DynamicUniversalRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
     @Override
     public boolean isDynamic() {
         return true;
-    }
-
-    public static final List<DynamicUniversalRecipe> RECIPES = registerRecipes();
-
-    private static List<DynamicUniversalRecipe> registerRecipes() {
-        List<DynamicUniversalRecipe> RECIPES = new ObjectArrayList<>();
-        itemList.forEach((mode, item) -> RECIPES.add(new DynamicUniversalRecipe(item, mode)));
-        return RECIPES;
     }
 }

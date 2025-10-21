@@ -24,29 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CPacketUseKeybind.Handler.class, remap = false)
 public class MixinCPacketUseKeybindHandler {
 
-    @Inject(method = "onMessage(Lcom/glodblock/github/network/CPacketUseKeybind;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At(value = "HEAD"), cancellable = true)
-    public void onMessageMixin(CPacketUseKeybind message, MessageContext ctx, CallbackInfoReturnable<IMessage> cir) {
-        final EntityPlayerMP player = ctx.getServerHandler().player;
-        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-            ItemStack is = player.inventory.getStackInSlot(i);
-            final var tag = is.getTagCompound();
-            if (tag != null) {
-                IntList list = null;
-                if (tag.hasKey("modes")) {
-                    list = new IntArrayList(tag.getIntArray("modes"));
-                }
-                if (is.getItem() instanceof ItemWirelessUniversalTerminal && list != null && list.contains(4)) {
-                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, i, false);
-                    cir.setReturnValue(null);
-                    return;
-                }
-            }
-        }
-        if (Loader.isModLoaded("baubles")) {
-            tryOpenBauble(player);
-        }
-    }
-
     @Shadow
     private static void tryOpenBauble(EntityPlayer player) {
     }
@@ -74,6 +51,29 @@ public class MixinCPacketUseKeybindHandler {
                     return;
                 }
             }
+        }
+    }
+
+    @Inject(method = "onMessage(Lcom/glodblock/github/network/CPacketUseKeybind;Lnet/minecraftforge/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraftforge/fml/common/network/simpleimpl/IMessage;", at = @At(value = "HEAD"), cancellable = true)
+    public void onMessageMixin(CPacketUseKeybind message, MessageContext ctx, CallbackInfoReturnable<IMessage> cir) {
+        final EntityPlayerMP player = ctx.getServerHandler().player;
+        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+            ItemStack is = player.inventory.getStackInSlot(i);
+            final var tag = is.getTagCompound();
+            if (tag != null) {
+                IntList list = null;
+                if (tag.hasKey("modes")) {
+                    list = new IntArrayList(tag.getIntArray("modes"));
+                }
+                if (is.getItem() instanceof ItemWirelessUniversalTerminal && list != null && list.contains(4)) {
+                    AE2UELWirelessUniversalTerminal.openWirelessTerminalGui(is, player, 4, i, false);
+                    cir.setReturnValue(null);
+                    return;
+                }
+            }
+        }
+        if (Loader.isModLoaded("baubles")) {
+            tryOpenBauble(player);
         }
     }
 }

@@ -56,44 +56,6 @@ public class AE2UELWirelessUniversalTerminal {
     public static AE2UELWirelessUniversalTerminal instance = null;
     public static LogWrapper logger;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-
-        int start = 0;
-
-        NET_CHANNEL.registerMessage(UpdateItemModeMessage.class, UpdateItemModeMessage.class, start++, Side.SERVER);
-        NET_CHANNEL.registerMessage(WirelessTerminalRefresh.class, WirelessTerminalRefresh.class, start++, Side.SERVER);
-        NET_CHANNEL.registerMessage(OpenWUTGui.class, OpenWUTGui.class, start++, Side.SERVER);
-
-        NET_CHANNEL.registerMessage(UpdateItemModeMessage.class, UpdateItemModeMessage.class, start++, Side.CLIENT);
-
-        proxy.preInit();
-    }
-
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        proxy.init();
-    }
-
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit();
-    }
-
-    public void registryContainer(byte id, GetGui<? extends AEBaseContainer> targetContainer) {
-        proxy.registryContainer(id, targetContainer);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void registryGui(byte id, GetGui<? extends AEBaseGui> targetGui) {
-        ((ClientProxy) proxy).registryGui(id, targetGui);
-    }
-
-    @FunctionalInterface
-    public interface GetGui<T> {
-        T get(ItemStack item, EntityPlayer player, int slot, int isBauble);
-    }
-
     @SideOnly(Side.CLIENT)
     public static void openWirelessTerminalGui(WirelessTerminalGuiObject obj, byte mode) {
         ItemStack stack = ItemStack.EMPTY;
@@ -103,6 +65,7 @@ public class AE2UELWirelessUniversalTerminal {
             stack = getBaubleItem(Minecraft.getMinecraft().player, obj.getInventorySlot());
         }
         if (!stack.isEmpty()) {
+            Minecraft.getMinecraft().player.closeScreen();
             ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stack);
             ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stack, mode);
             NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
@@ -143,5 +106,43 @@ public class AE2UELWirelessUniversalTerminal {
                 }
             }
         }
+    }
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+
+        int start = 0;
+
+        NET_CHANNEL.registerMessage(UpdateItemModeMessage.class, UpdateItemModeMessage.class, start++, Side.SERVER);
+        NET_CHANNEL.registerMessage(WirelessTerminalRefresh.class, WirelessTerminalRefresh.class, start++, Side.SERVER);
+        NET_CHANNEL.registerMessage(OpenWUTGui.class, OpenWUTGui.class, start++, Side.SERVER);
+
+        NET_CHANNEL.registerMessage(UpdateItemModeMessage.class, UpdateItemModeMessage.class, start++, Side.CLIENT);
+
+        proxy.preInit();
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        proxy.init();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit();
+    }
+
+    public void registryContainer(byte id, GetGui<? extends AEBaseContainer> targetContainer) {
+        proxy.registryContainer(id, targetContainer);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void registryGui(byte id, GetGui<? extends AEBaseGui> targetGui) {
+        ((ClientProxy) proxy).registryGui(id, targetGui);
+    }
+
+    @FunctionalInterface
+    public interface GetGui<T> {
+        T get(ItemStack item, EntityPlayer player, int slot, int isBauble);
     }
 }

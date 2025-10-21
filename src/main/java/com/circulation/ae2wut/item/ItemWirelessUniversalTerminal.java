@@ -64,12 +64,45 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
             if (stack.hasTagCompound()) {
                 if (stack.getTagCompound().hasKey("Nova")) {
                     return 114514;
-                } else {
-                    return stack.getTagCompound().getByte("mode");
                 }
             }
             return 0;
         });
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static String getWirelessName(int value) {
+        return "§6(" + ItemWUTBakedModel.getIconItem((byte) value).getDisplayName() + ")";
+    }
+
+    @Optional.Method(modid = "ae2exttable")
+    public static AE2ExtendedGUIs getGuiType(ItemStack item) {
+        if (item.hasTagCompound()) {
+            byte mode = item.getTagCompound().getByte("mode");
+            return getGui(mode);
+        }
+        return null;
+    }
+
+    @Optional.Method(modid = "ae2exttable")
+    public static AE2ExtendedGUIs getGui(byte value) {
+        return switch (value) {
+            case 7 -> AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
+            case 8 -> AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
+            case 9 -> AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
+            default -> AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
+        };
+    }
+
+    @Optional.Method(modid = "ae2exttable")
+    public static byte getAE2EMode(AE2ExtendedGUIs value) {
+        return switch (value) {
+            case WIRELESS_BASIC_CRAFTING_TERMINAL -> 6;
+            case WIRELESS_ADVANCED_CRAFTING_TERMINAL -> 7;
+            case WIRELESS_ELITE_CRAFTING_TERMINAL -> 8;
+            case WIRELESS_ULTIMATE_CRAFTING_TERMINAL -> 9;
+            default -> 0;
+        };
     }
 
     @Override
@@ -198,16 +231,11 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
                 if (!tag.hasKey("cache")) {
                     tag.setTag("cache", new NBTTagCompound());
                 }
-                tag.getCompoundTag("cache").setTag(String.valueOf(mode), items);
+                tag.getCompoundTag("cache").setTag(Byte.toString(mode), items);
             }
             tag.getCompoundTag("craftingGrid").removeTag("Items");
             tag.removeTag("crafting");
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static String getWirelessName(int value) {
-        return "§6(" + ItemWUTBakedModel.getIconItem((byte) value).getDisplayName() + ")";
     }
 
     @Override
@@ -263,37 +291,6 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
         tag.setDouble("internalMaxPower", this.getAEMaxPower(charged));
         tag.setIntArray("modes", AE2UELWirelessUniversalTerminal.proxy.getAllMode());
         itemStacks.add(charged);
-    }
-
-    @Optional.Method(modid = "ae2exttable")
-    public static AE2ExtendedGUIs getGuiType(ItemStack item) {
-        if (item.hasTagCompound()) {
-            byte mode = item.getTagCompound().getByte("mode");
-            return getGui(mode);
-        }
-        return null;
-    }
-
-    @Optional.Method(modid = "ae2exttable")
-    public static AE2ExtendedGUIs getGui(byte value) {
-        return switch (value) {
-            case 6 -> AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
-            case 7 -> AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
-            case 8 -> AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
-            case 9 -> AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
-            default -> null;
-        };
-    }
-
-    @Optional.Method(modid = "ae2exttable")
-    public static byte getAE2EMode(AE2ExtendedGUIs value) {
-        return switch (value) {
-            case WIRELESS_BASIC_CRAFTING_TERMINAL -> 6;
-            case WIRELESS_ADVANCED_CRAFTING_TERMINAL -> 7;
-            case WIRELESS_ELITE_CRAFTING_TERMINAL -> 8;
-            case WIRELESS_ULTIMATE_CRAFTING_TERMINAL -> 9;
-            default -> 0;
-        };
     }
 
     public boolean hasMode(ItemStack t, byte mode) {

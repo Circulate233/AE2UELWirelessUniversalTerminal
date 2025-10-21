@@ -28,17 +28,16 @@ import static com.circulation.ae2wut.item.ItemWirelessUniversalTerminal.NAME;
 
 public class AllWUTRecipe {
 
+    public static ItemStack ItemWireless = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
     static IDefinitions appEngApi = AEApi.instance().definitions();
     static IItems AEItems = appEngApi.items();
-    public static ItemStack ItemWireless = new ItemStack(ItemWirelessUniversalTerminal.INSTANCE);
+    public static final Int2ObjectMap<ItemStack> itemList = getIngredient();
 
     private static NBTTagCompound getNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setIntArray("modes", itemList.keySet().toIntArray());
         return nbt;
     }
-
-    public static final Int2ObjectMap<ItemStack> itemList = getIngredient();
 
     private static Int2ObjectMap<ItemStack> getIngredient() {
         Int2ObjectMap<ItemStack> map = new Int2ObjectLinkedOpenHashMap<>();

@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.awt.Rectangle;
 import java.util.List;
 
-@Mixin(value = GuiMEMonitorable.class,priority = 999)
+@Mixin(value = GuiMEMonitorable.class, priority = 999)
 public abstract class MixinGuiMEMonitorable extends AEBaseMEGui {
 
     @Unique

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(value = WirelessTerminalGuiObjectTwo.class,remap = false)
+@Mixin(value = WirelessTerminalGuiObjectTwo.class, remap = false)
 public abstract class MixinWirelessTerminalGuiObjectTwo extends WirelessTerminalGuiObject implements ICraftingClass {
 
     @Shadow

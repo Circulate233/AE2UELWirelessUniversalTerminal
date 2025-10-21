@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
-@Mixin(value = GuiFCCraftAmount.class,remap = false)
+@Mixin(value = GuiFCCraftAmount.class, remap = false)
 public class MixinGuiFCCraftAmount extends GuiCraftAmount {
 
     @Shadow

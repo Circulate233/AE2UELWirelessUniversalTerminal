@@ -17,7 +17,7 @@ public final class TooltipButton extends GuiButton implements ITooltip {
     private final byte t;
     private byte nowGui;
 
-    public TooltipButton(int x, int y,byte t) {
+    public TooltipButton(int x, int y, byte t) {
         super(0, x, y, "");
         if (t < 0) {
             this.width = 18;
@@ -29,7 +29,7 @@ public final class TooltipButton extends GuiButton implements ITooltip {
         this.t = t;
     }
 
-    public TooltipButton(int x, int y,byte t,byte nowGui) {
+    public TooltipButton(int x, int y, byte t, byte nowGui) {
         this(x, y, t);
         if (t < 0) {
             this.nowGui = nowGui;
