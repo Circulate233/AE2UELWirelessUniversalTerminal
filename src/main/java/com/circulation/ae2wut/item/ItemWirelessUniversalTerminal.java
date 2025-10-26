@@ -34,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -76,22 +77,19 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     }
 
     @Optional.Method(modid = "ae2exttable")
+    @Nullable
     public static AE2ExtendedGUIs getGuiType(ItemStack item) {
         if (item.hasTagCompound()) {
             byte mode = item.getTagCompound().getByte("mode");
-            return getGui(mode);
+            return switch (mode) {
+                case 6 -> AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
+                case 7 -> AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
+                case 8 -> AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
+                case 9 -> AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
+                default -> null;
+            };
         }
         return null;
-    }
-
-    @Optional.Method(modid = "ae2exttable")
-    public static AE2ExtendedGUIs getGui(byte value) {
-        return switch (value) {
-            case 7 -> AE2ExtendedGUIs.WIRELESS_ADVANCED_CRAFTING_TERMINAL;
-            case 8 -> AE2ExtendedGUIs.WIRELESS_ELITE_CRAFTING_TERMINAL;
-            case 9 -> AE2ExtendedGUIs.WIRELESS_ULTIMATE_CRAFTING_TERMINAL;
-            default -> AE2ExtendedGUIs.WIRELESS_BASIC_CRAFTING_TERMINAL;
-        };
     }
 
     @Optional.Method(modid = "ae2exttable")
