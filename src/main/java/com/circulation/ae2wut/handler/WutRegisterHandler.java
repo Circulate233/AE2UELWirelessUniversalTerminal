@@ -23,7 +23,6 @@ import com._0xc4de.ae2exttable.client.gui.wireless.GuiWirelessUltimateCraftingTe
 import com._0xc4de.ae2exttable.items.ItemRegistry;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
-import com.glodblock.github.client.GuiWirelessFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerWirelessFluidPatternTerminal;
 import com.glodblock.github.loader.FCItems;
 import com.mekeng.github.client.gui.GuiWirelessGasTerminal;
@@ -208,6 +207,7 @@ public final class WutRegisterHandler {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @SideOnly(Side.CLIENT)
     public static class Client {
 
@@ -307,7 +307,7 @@ public final class WutRegisterHandler {
         @Optional.Method(modid = "ae2fc")
         private static void registerAE2FCGUI() {
             try {
-                registerGui(4, GuiWirelessFluidPatternTerminal.class);
+                registerGui(4, (Class<? extends AEBaseGui>) Class.forName("com.glodblock.github.client.GuiWirelessFluidPatternTerminal"));
                 regIcon(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
             } catch (Throwable ignored) {
 
