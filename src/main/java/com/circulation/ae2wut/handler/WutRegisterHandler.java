@@ -25,7 +25,6 @@ import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import com.glodblock.github.client.GuiWirelessFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerWirelessFluidPatternTerminal;
-import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.loader.FCItems;
 import com.mekeng.github.client.gui.GuiWirelessGasTerminal;
 import com.mekeng.github.common.ItemAndBlocks;
@@ -104,8 +103,8 @@ public final class WutRegisterHandler {
     @Optional.Method(modid = "ae2fc")
     private static void registerAE2FCContainer() {
         try {
-            var b = new Object() instanceof TileFluidLevelMaintainer;
-            registerContainer(4, ContainerWirelessFluidPatternTerminal.class);
+            if (isClassPresent("com.glodblock.github.common.tile.TileFluidLevelMaintainer"))
+                registerContainer(4, ContainerWirelessFluidPatternTerminal.class);
         } catch (Throwable ignored) {
 
         }
@@ -249,7 +248,9 @@ public final class WutRegisterHandler {
         public static void registerAllGui() {
             map.defaultReturnValue(Byte.MIN_VALUE);
             registerAEGui();
-            if (modload("ae2fc")) registerAE2FCGUI();
+            if (isClassPresent("com.glodblock.github.common.tile.TileFluidLevelMaintainer")) {
+                registerAE2FCGUI();
+            }
             if (modload("mekeng")) registerMEKGUI();
             if (modload("ae2exttable")) registerAE2EGUI();
         }
@@ -399,5 +400,11 @@ public final class WutRegisterHandler {
                     });
             }
         }
+    }
+
+    public static boolean isClassPresent(String className) {
+        String classFilePath = className.replace('.', '/') + ".class";
+        ClassLoader classLoader = WutRegisterHandler.class.getClassLoader();
+        return classLoader.getResource(classFilePath) != null;
     }
 }
