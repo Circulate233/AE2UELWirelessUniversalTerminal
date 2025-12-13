@@ -106,7 +106,7 @@ public final class WutRegisterHandler {
         try {
             var b = new Object() instanceof TileFluidLevelMaintainer;
             registerContainer(4, ContainerWirelessFluidPatternTerminal.class);
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
 
         }
     }
@@ -115,7 +115,7 @@ public final class WutRegisterHandler {
     private static void registerMEKContainer() {
         try {
             registerContainer(5, ContainerWirelessGasTerminal.class);
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
 
         }
     }
@@ -308,7 +308,7 @@ public final class WutRegisterHandler {
             try {
                 registerGui(4, GuiWirelessFluidPatternTerminal.class);
                 regIcon(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
-            } catch (Exception ignored) {
+            } catch (Throwable ignored) {
 
             }
         }
@@ -318,7 +318,7 @@ public final class WutRegisterHandler {
             try {
                 registerGui(5, GuiWirelessGasTerminal.class);
                 regIcon(5, new ItemStack(ItemAndBlocks.WIRELESS_GAS_TERMINAL));
-            } catch (Exception ignored) {
+            } catch (Throwable ignored) {
 
             }
         }
