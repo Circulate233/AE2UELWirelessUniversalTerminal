@@ -13,7 +13,7 @@ public class WUTModelLoader implements ICustomModelLoader {
     @Override
     public boolean accepts(ResourceLocation modelLocation) {
         return modelLocation.getNamespace().equals(AE2UELWirelessUniversalTerminal.MOD_ID)
-                && !modelLocation.getPath().startsWith("models");
+            && !modelLocation.getPath().startsWith("models");
     }
 
     @Override

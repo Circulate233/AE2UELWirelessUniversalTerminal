@@ -66,4 +66,8 @@ public class ClientProxy extends CommonProxy {
     public void registryGui(byte id, AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseGui> function) {
         GuiMap.put(id, function);
     }
+
+    public boolean isRegistered(byte id) {
+        return GuiMap.containsKey(id);
+    }
 }

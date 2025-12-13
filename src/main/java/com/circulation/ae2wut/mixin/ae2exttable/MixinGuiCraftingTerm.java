@@ -59,9 +59,9 @@ public class MixinGuiCraftingTerm extends GuiMEMonitorableTwo {
     public void initGui(CallbackInfo ci) {
         if (wut$isWut) {
             this.wut$Map = GuiHandler.initGui(
-                    this.guiTop, this.guiLeft, this.buttonList,
-                    WutRegisterHandler.Client.getGuiType(this.getClass()),
-                    this.wut$guiItem
+                this.guiTop, this.guiLeft, this.buttonList,
+                WutRegisterHandler.Client.getGuiType(this.getClass()),
+                this.wut$guiItem
             );
             this.wut$enableSwitching = false;
             this.wut$t = this.wut$Map.get((byte) -1);

@@ -35,9 +35,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "ae2wut", name = Tags.MOD_NAME, version = Tags.VERSION,
-        dependencies = "required-after:mixinbooter@[8.0,);" +
-                "required-after:appliedenergistics2@[v0.56.7,);" +
-                "after:ae2exttable@[v1.0.8,);"
+    dependencies = "required-after:mixinbooter@[8.0,);" +
+        "required-after:appliedenergistics2@[v0.56.7,);" +
+        "after:ae2exttable@[v1.0.8,);"
 )
 public class AE2UELWirelessUniversalTerminal {
 

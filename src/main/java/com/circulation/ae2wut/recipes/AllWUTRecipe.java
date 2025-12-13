@@ -88,10 +88,10 @@ public class AllWUTRecipe {
         ItemWirelessALL.setTagCompound(getNBT());
         if (inputs.size() < 10) {
             GameRegistry.addShapelessRecipe(
-                    new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME + "all"),
-                    null,
-                    ItemWirelessALL,
-                    inputs.toArray(new Ingredient[0])
+                new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, NAME + "all"),
+                null,
+                ItemWirelessALL,
+                inputs.toArray(new Ingredient[0])
             );
         } else if (Loader.isModLoaded("extendedcrafting")) {
             extendedcraftingRecipe(inputs, ItemWirelessALL);
@@ -104,13 +104,13 @@ public class AllWUTRecipe {
                 int ll = modes[j];
                 Platform.openNbtData(out).setIntArray("modes", new int[]{l, ll});
                 GameRegistry.addShapelessRecipe(
-                        new ResourceLocation(
-                                AE2UELWirelessUniversalTerminal.MOD_ID, NAME + i + "_" + j
-                        ),
-                        null,
-                        out,
-                        Ingredient.fromStacks(itemList.get(l)),
-                        Ingredient.fromStacks(itemList.get(ll))
+                    new ResourceLocation(
+                        AE2UELWirelessUniversalTerminal.MOD_ID, NAME + i + "_" + j
+                    ),
+                    null,
+                    out,
+                    Ingredient.fromStacks(itemList.get(l)),
+                    Ingredient.fromStacks(itemList.get(ll))
                 );
             }
         }

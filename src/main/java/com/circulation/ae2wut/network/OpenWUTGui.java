@@ -55,9 +55,9 @@ public class OpenWUTGui implements IMessage, IMessageHandler<OpenWUTGui, IMessag
         }
         if (terminal.getItem() == ItemWirelessUniversalTerminal.INSTANCE) {
             AE2UELWirelessUniversalTerminal
-                    .openWirelessTerminalGui(
-                            terminal, player, message.mode, message.slot, message.isBauble
-                    );
+                .openWirelessTerminalGui(
+                    terminal, player, message.mode, message.slot, message.isBauble
+                );
         }
         return null;
     }

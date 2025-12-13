@@ -115,4 +115,8 @@ public class CommonProxy implements IGuiHandler {
 
         return modes;
     }
+
+    public boolean isRegistered(byte id) {
+        return ContainerMap.containsKey(id);
+    }
 }

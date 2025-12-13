@@ -2,17 +2,14 @@ package com.circulation.ae2wut.handler;
 
 import appeng.api.AEApi;
 import appeng.api.features.IWirelessTermHandler;
+import appeng.api.util.AEPartLocation;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.implementations.GuiWirelessCraftingTerminal;
 import appeng.client.gui.implementations.GuiWirelessInterfaceTerminal;
 import appeng.client.gui.implementations.GuiWirelessPatternTerminal;
-import appeng.client.gui.implementations.GuiWirelessTerm;
 import appeng.container.AEBaseContainer;
-import appeng.container.implementations.ContainerWirelessCraftingTerminal;
-import appeng.container.implementations.ContainerWirelessInterfaceTerminal;
-import appeng.container.implementations.ContainerWirelessPatternTerminal;
+import appeng.core.sync.GuiBridge;
 import appeng.fluids.client.gui.GuiWirelessFluidTerminal;
-import appeng.fluids.container.ContainerWirelessFluidTerminal;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com._0xc4de.ae2exttable.client.container.wireless.ContainerAdvancedWirelessTerminal;
 import com._0xc4de.ae2exttable.client.container.wireless.ContainerBasicWirelessTerminal;
@@ -28,12 +25,14 @@ import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import com.glodblock.github.client.GuiWirelessFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerWirelessFluidPatternTerminal;
+import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.loader.FCItems;
 import com.mekeng.github.client.gui.GuiWirelessGasTerminal;
 import com.mekeng.github.common.ItemAndBlocks;
 import com.mekeng.github.common.container.ContainerWirelessGasTerminal;
 import it.unimi.dsi.fastutil.objects.Object2ByteMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -46,7 +45,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class WutRegisterHandler {
+public final class WutRegisterHandler {
 
     private static boolean modload(String name) {
         return Loader.isModLoaded(name);
@@ -60,20 +59,65 @@ public class WutRegisterHandler {
     }
 
     private static void registerAEContainer() {
-        registerContainer(1, ContainerWirelessCraftingTerminal.class);
-        registerContainer(2, ContainerWirelessFluidTerminal.class);
-        registerContainer(3, ContainerWirelessPatternTerminal.class);
-        registerContainer(10, ContainerWirelessInterfaceTerminal.class);
+        AE2UELWirelessUniversalTerminal.instance.registryContainer(
+            (byte) 1,
+            (item, player, slot, isBauble) -> {
+                var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                if (wth != null) {
+                    return (AEBaseContainer) GuiBridge.GUI_WIRELESS_CRAFTING_TERMINAL.ConstructContainer(player.inventory, AEPartLocation.INTERNAL, wth);
+                } else {
+                    return null;
+                }
+            });
+        AE2UELWirelessUniversalTerminal.instance.registryContainer(
+            (byte) 2,
+            (item, player, slot, isBauble) -> {
+                var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                if (wth != null) {
+                    return (AEBaseContainer) GuiBridge.GUI_WIRELESS_FLUID_TERMINAL.ConstructContainer(player.inventory, AEPartLocation.INTERNAL, wth);
+                } else {
+                    return null;
+                }
+            });
+        AE2UELWirelessUniversalTerminal.instance.registryContainer(
+            (byte) 3,
+            (item, player, slot, isBauble) -> {
+                var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                if (wth != null) {
+                    return (AEBaseContainer) GuiBridge.GUI_WIRELESS_PATTERN_TERMINAL.ConstructContainer(player.inventory, AEPartLocation.INTERNAL, wth);
+                } else {
+                    return null;
+                }
+            });
+        AE2UELWirelessUniversalTerminal.instance.registryContainer(
+            (byte) 10,
+            (item, player, slot, isBauble) -> {
+                var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                if (wth != null) {
+                    return (AEBaseContainer) GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL.ConstructContainer(player.inventory, AEPartLocation.INTERNAL, wth);
+                } else {
+                    return null;
+                }
+            });
     }
 
     @Optional.Method(modid = "ae2fc")
     private static void registerAE2FCContainer() {
-        registerContainer(4, ContainerWirelessFluidPatternTerminal.class);
+        try {
+            var b = new Object() instanceof TileFluidLevelMaintainer;
+            registerContainer(4, ContainerWirelessFluidPatternTerminal.class);
+        } catch (Exception ignored) {
+
+        }
     }
 
     @Optional.Method(modid = "mekeng")
     private static void registerMEKContainer() {
-        registerContainer(5, ContainerWirelessGasTerminal.class);
+        try {
+            registerContainer(5, ContainerWirelessGasTerminal.class);
+        } catch (Exception ignored) {
+
+        }
     }
 
     @Optional.Method(modid = "ae2exttable")
@@ -98,19 +142,19 @@ public class WutRegisterHandler {
         var c = getAE2EContainer(constructor);
         if (c != null) {
             AE2UELWirelessUniversalTerminal.instance.registryContainer(
-                    (byte) id,
-                    (item, player, slot, isBauble) -> {
-                        var wth = getWirelessTerminalGuiObjectTwo(item, player, player.world, slot, isBauble);
-                        if (wth != null) {
-                            try {
-                                return c.newInstance(player.inventory, wth);
-                            } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                                return null;
-                            }
-                        } else {
+                (byte) id,
+                (item, player, slot, isBauble) -> {
+                    var wth = getWirelessTerminalGuiObjectTwo(item, player, player.world, slot, isBauble);
+                    if (wth != null) {
+                        try {
+                            return c.newInstance(player.inventory, wth);
+                        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
                             return null;
                         }
-                    });
+                    } else {
+                        return null;
+                    }
+                });
         }
     }
 
@@ -126,19 +170,19 @@ public class WutRegisterHandler {
         var c = getConstructor(constructor);
         if (c != null) {
             AE2UELWirelessUniversalTerminal.instance.registryContainer(
-                    (byte) id,
-                    (item, player, slot, isBauble) -> {
-                        var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
-                        if (wth != null) {
-                            try {
-                                return c.newInstance(player.inventory, wth);
-                            } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                                return null;
-                            }
-                        } else {
+                (byte) id,
+                (item, player, slot, isBauble) -> {
+                    var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                    if (wth != null) {
+                        try {
+                            return c.newInstance(player.inventory, wth);
+                        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
                             return null;
                         }
-                    });
+                    } else {
+                        return null;
+                    }
+                });
         }
     }
 
@@ -168,10 +212,34 @@ public class WutRegisterHandler {
     @SideOnly(Side.CLIENT)
     public static class Client {
 
+        private static Class<?> fc;
+
+        static {
+            try {
+                fc = Class.forName("com.glodblock.github.client.client.gui.GuiWirelessFluidPatternTerminal");
+            } catch (ClassNotFoundException e) {
+                fc = null;
+            }
+        }
+
         private static final Object2ByteMap<Class<?>> map = new Object2ByteOpenHashMap<>();
 
         public static byte getGuiType(Class<?> c) {
             return map.getByte(c);
+        }
+
+        public static byte getGuiType(GuiScreen gui) {
+            if (gui instanceof GuiWirelessCraftingTerminal) {
+                return 1;
+            } else if (gui instanceof GuiWirelessFluidTerminal) {
+                return 2;
+            } else if (gui instanceof GuiWirelessPatternTerminal || (fc != null && fc.isInstance(gui))) {
+                return 3;
+            } else if (gui instanceof GuiWirelessInterfaceTerminal) {
+                return 10;
+            }
+
+            return map.getByte(gui.getClass());
         }
 
         private static void regIcon(int id, ItemStack icon) {
@@ -187,12 +255,46 @@ public class WutRegisterHandler {
         }
 
         private static void registerAEGui() {
-            registerGui(0, GuiWirelessTerm.class);
-            registerGui(1, GuiWirelessCraftingTerminal.class);
-            registerGui(2, GuiWirelessFluidTerminal.class);
-            registerGui(3, GuiWirelessPatternTerminal.class);
-            registerGui(10, GuiWirelessInterfaceTerminal.class);
-
+            AE2UELWirelessUniversalTerminal.instance.registryGui(
+                (byte) 1,
+                (item, player, slot, isBauble) -> {
+                    var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                    if (wth != null) {
+                        return (AEBaseGui) GuiBridge.GUI_WIRELESS_CRAFTING_TERMINAL.ConstructGui(player.inventory, AEPartLocation.INTERNAL, wth);
+                    } else {
+                        return null;
+                    }
+                });
+            AE2UELWirelessUniversalTerminal.instance.registryGui(
+                (byte) 2,
+                (item, player, slot, isBauble) -> {
+                    var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                    if (wth != null) {
+                        return (AEBaseGui) GuiBridge.GUI_WIRELESS_FLUID_TERMINAL.ConstructGui(player.inventory, AEPartLocation.INTERNAL, wth);
+                    } else {
+                        return null;
+                    }
+                });
+            AE2UELWirelessUniversalTerminal.instance.registryGui(
+                (byte) 3,
+                (item, player, slot, isBauble) -> {
+                    var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                    if (wth != null) {
+                        return (AEBaseGui) GuiBridge.GUI_WIRELESS_PATTERN_TERMINAL.ConstructGui(player.inventory, AEPartLocation.INTERNAL, wth);
+                    } else {
+                        return null;
+                    }
+                });
+            AE2UELWirelessUniversalTerminal.instance.registryGui(
+                (byte) 10,
+                (item, player, slot, isBauble) -> {
+                    var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                    if (wth != null) {
+                        return (AEBaseGui) GuiBridge.GUI_WIRELESS_INTERFACE_TERMINAL.ConstructGui(player.inventory, AEPartLocation.INTERNAL, wth);
+                    } else {
+                        return null;
+                    }
+                });
             var item = AEApi.instance().definitions().items();
             regIcon(0, item.wirelessTerminal().maybeStack(1).get());
             regIcon(1, item.wirelessCraftingTerminal().maybeStack(1).get());
@@ -203,14 +305,22 @@ public class WutRegisterHandler {
 
         @Optional.Method(modid = "ae2fc")
         private static void registerAE2FCGUI() {
-            registerGui(4, GuiWirelessFluidPatternTerminal.class);
-            regIcon(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
+            try {
+                registerGui(4, GuiWirelessFluidPatternTerminal.class);
+                regIcon(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
+            } catch (Exception ignored) {
+
+            }
         }
 
         @Optional.Method(modid = "mekeng")
         private static void registerMEKGUI() {
-            registerGui(5, GuiWirelessGasTerminal.class);
-            regIcon(5, new ItemStack(ItemAndBlocks.WIRELESS_GAS_TERMINAL));
+            try {
+                registerGui(5, GuiWirelessGasTerminal.class);
+                regIcon(5, new ItemStack(ItemAndBlocks.WIRELESS_GAS_TERMINAL));
+            } catch (Exception ignored) {
+
+            }
         }
 
         @Optional.Method(modid = "ae2exttable")
@@ -242,21 +352,21 @@ public class WutRegisterHandler {
             var g = getAE2EGui(constructor, container);
             if (c != null && g != null) {
                 AE2UELWirelessUniversalTerminal.instance.registryGui(
-                        (byte) id,
-                        (item, player, slot, isBauble) -> {
-                            var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
-                            var wth2 = getWirelessTerminalGuiObjectTwo(item, player, player.world, slot, isBauble);
-                            if (wth != null) {
-                                try {
-                                    return g.newInstance(player.inventory, wth, c.newInstance(player.inventory, wth2));
-                                } catch (InvocationTargetException | IllegalAccessException |
-                                         InstantiationException e) {
-                                    return null;
-                                }
-                            } else {
+                    (byte) id,
+                    (item, player, slot, isBauble) -> {
+                        var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                        var wth2 = getWirelessTerminalGuiObjectTwo(item, player, player.world, slot, isBauble);
+                        if (wth != null) {
+                            try {
+                                return g.newInstance(player.inventory, wth, c.newInstance(player.inventory, wth2));
+                            } catch (InvocationTargetException | IllegalAccessException |
+                                     InstantiationException e) {
                                 return null;
                             }
-                        });
+                        } else {
+                            return null;
+                        }
+                    });
             }
         }
 
@@ -273,20 +383,20 @@ public class WutRegisterHandler {
             var c = getGui(constructor);
             if (c != null) {
                 AE2UELWirelessUniversalTerminal.instance.registryGui(
-                        (byte) id,
-                        (item, player, slot, isBauble) -> {
-                            var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
-                            if (wth != null) {
-                                try {
-                                    return c.newInstance(player.inventory, wth);
-                                } catch (InvocationTargetException | IllegalAccessException |
-                                         InstantiationException e) {
-                                    return null;
-                                }
-                            } else {
+                    (byte) id,
+                    (item, player, slot, isBauble) -> {
+                        var wth = getWirelessTerminalGuiObject(item, player, player.world, slot, isBauble);
+                        if (wth != null) {
+                            try {
+                                return c.newInstance(player.inventory, wth);
+                            } catch (InvocationTargetException | IllegalAccessException |
+                                     InstantiationException e) {
                                 return null;
                             }
-                        });
+                        } else {
+                            return null;
+                        }
+                    });
             }
         }
     }

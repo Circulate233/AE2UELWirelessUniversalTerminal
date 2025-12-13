@@ -71,9 +71,9 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
         if (wut$isWut) {
             if (wut$t == null) {
                 this.wut$Map = GuiHandler.initGui(
-                        this.guiTop, this.guiLeft, this.buttonList,
-                        WutRegisterHandler.Client.getGuiType(this.getClass()),
-                        this.wut$guiItem
+                    this.guiTop, this.guiLeft, this.buttonList,
+                    WutRegisterHandler.Client.getGuiType(this),
+                    this.wut$guiItem
                 );
                 this.wut$enableSwitching = false;
                 for (TooltipButton value : this.wut$Map.values()) {

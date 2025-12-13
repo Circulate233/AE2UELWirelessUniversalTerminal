@@ -38,7 +38,7 @@ public abstract class MixinGuiCraftConfirm extends AEBaseGui {
 
     @SuppressWarnings("InjectIntoConstructor")
     @Inject(method = "<init>(Lnet/minecraft/entity/player/InventoryPlayer;Lappeng/api/storage/ITerminalHost;)V",
-            at = @At(value = "INVOKE", target = "Lappeng/container/implementations/ContainerCraftConfirm;setGui(Lappeng/client/gui/implementations/GuiCraftConfirm;)V", shift = At.Shift.AFTER))
+        at = @At(value = "INVOKE", target = "Lappeng/container/implementations/ContainerCraftConfirm;setGui(Lappeng/client/gui/implementations/GuiCraftConfirm;)V", shift = At.Shift.AFTER))
     private void onInit(final InventoryPlayer inventoryPlayer, final ITerminalHost te, CallbackInfo ci) {
         if (te instanceof WirelessTerminalGuiObject term) {
             if (term.getItemStack().getItem() instanceof ItemWirelessUniversalTerminal t) {
