@@ -6,6 +6,7 @@ import appeng.client.gui.widgets.GuiTabButton;
 import appeng.container.AEBaseContainer;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.circulation.ae2wut.mixin.ae2.gui.AccessorGuiCraftAmount;
 import com.glodblock.github.client.GuiFCCraftAmount;
 import com.glodblock.github.inventory.GuiType;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 @Mixin(value = GuiFCCraftAmount.class, remap = false)
-public class MixinGuiFCCraftAmount extends GuiCraftAmount {
+public abstract class MixinGuiFCCraftAmount extends GuiCraftAmount implements AccessorGuiCraftAmount {
 
     @Shadow
     private GuiType originGui;
@@ -32,6 +33,7 @@ public class MixinGuiFCCraftAmount extends GuiCraftAmount {
 
     @Inject(method = "initGui", at = @At(value = "TAIL"), cancellable = true, remap = true)
     public void onInitGui(CallbackInfo ci) {
+        if (getOriginalGui() != null) return;
         Object te = ((AEBaseContainer) this.inventorySlots).getTarget();
         ItemStack icon = ItemStack.EMPTY;
         if (te instanceof WirelessTerminalGuiObject) {

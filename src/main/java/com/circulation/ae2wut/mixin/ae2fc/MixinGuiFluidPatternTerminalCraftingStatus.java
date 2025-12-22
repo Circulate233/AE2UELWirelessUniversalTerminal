@@ -6,6 +6,7 @@ import appeng.client.gui.widgets.GuiTabButton;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.circulation.ae2wut.mixin.ae2.gui.AccessorGuiCraftingStatus;
 import com.glodblock.github.client.GuiFluidPatternTerminalCraftingStatus;
 import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.gui.GuiButton;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = GuiFluidPatternTerminalCraftingStatus.class, remap = false)
-public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatus {
+public abstract class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatus implements AccessorGuiCraftingStatus {
 
     @Mutable
     @Final
@@ -35,6 +36,7 @@ public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatu
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void onInit(InventoryPlayer inventoryPlayer, ITerminalHost te, CallbackInfo ci) {
+        if (getOriginalGui() != null) return;
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
             if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
@@ -45,6 +47,7 @@ public class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatu
 
     @Inject(method = "actionPerformed", at = @At(value = "HEAD"), remap = true)
     public void onActionPerformed(GuiButton btn, CallbackInfo ci) {
+        if (getOriginalGui() != null) return;
         if (btn == this.originalGuiBtn) {
             if (this.part instanceof WirelessTerminalGuiObject t) {
                 ItemStack tool = t.getItemStack();

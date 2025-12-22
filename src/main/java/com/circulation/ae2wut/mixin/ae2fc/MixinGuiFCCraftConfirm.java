@@ -5,6 +5,7 @@ import appeng.client.gui.implementations.GuiCraftConfirm;
 import appeng.container.AEBaseContainer;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.circulation.ae2wut.mixin.ae2.gui.AccessorGuiCraftConfirm;
 import com.glodblock.github.client.GuiFCCraftConfirm;
 import com.glodblock.github.inventory.GuiType;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = GuiFCCraftConfirm.class, remap = false)
-public class MixinGuiFCCraftConfirm extends GuiCraftConfirm {
+public abstract class MixinGuiFCCraftConfirm extends GuiCraftConfirm implements AccessorGuiCraftConfirm {
     @Shadow
     private GuiType originGui;
 
@@ -26,6 +27,7 @@ public class MixinGuiFCCraftConfirm extends GuiCraftConfirm {
 
     @Inject(method = "initGui", at = @At(value = "TAIL"), remap = true)
     public void onInitGui(CallbackInfo ci) {
+        if (getOriginalGui() != null) return;
         Object te = ((AEBaseContainer) this.inventorySlots).getTarget();
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();

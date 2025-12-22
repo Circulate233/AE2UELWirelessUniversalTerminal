@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.List;
 
+import static com.circulation.ae2wut.handler.WutRegisterHandler.isClassPresent;
 import static com.circulation.ae2wut.item.ItemWirelessUniversalTerminal.NAME;
 
 public class AllWUTRecipe {
@@ -63,7 +64,12 @@ public class AllWUTRecipe {
 
     @Optional.Method(modid = "ae2fc")
     private static void addAE2FC(Int2ObjectMap<ItemStack> map) {
-        map.put(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
+        try {
+            if (isClassPresent("com.glodblock.github.common.tile.TileFluidLevelMaintainer"))
+                map.put(4, new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL));
+        } catch (Throwable ignored) {
+
+        }
     }
 
     @Optional.Method(modid = "mekeng")

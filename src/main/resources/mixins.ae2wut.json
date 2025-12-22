@@ -5,6 +5,9 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "gui.AccessorGuiCraftAmount",
+    "gui.AccessorGuiCraftConfirm",
+    "gui.AccessorGuiCraftingStatus",
     "gui.MixinGuiMEMonitorable",
     "gui.MixinGuiWirelessFluidTerminal",
     "gui.MixinGuiWirelessInterfaceTerminal"
