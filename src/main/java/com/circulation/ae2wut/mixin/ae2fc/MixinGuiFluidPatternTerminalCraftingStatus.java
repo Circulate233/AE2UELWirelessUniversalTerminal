@@ -3,6 +3,7 @@ package com.circulation.ae2wut.mixin.ae2fc;
 import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.implementations.GuiCraftingStatus;
 import appeng.client.gui.widgets.GuiTabButton;
+import appeng.core.sync.GuiBridge;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
@@ -36,7 +37,7 @@ public abstract class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraf
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void onInit(InventoryPlayer inventoryPlayer, ITerminalHost te, CallbackInfo ci) {
-        if (getOriginalGui() != null) return;
+        if (getOriginalGui() != null && getOriginalGui() != GuiBridge.GUI_WIRELESS_TERM) return;
         if (te instanceof WirelessTerminalGuiObject) {
             ItemStack tool = ((WirelessTerminalGuiObject) te).getItemStack();
             if (tool.getItem() instanceof ItemWirelessUniversalTerminal) {
@@ -47,7 +48,7 @@ public abstract class MixinGuiFluidPatternTerminalCraftingStatus extends GuiCraf
 
     @Inject(method = "actionPerformed", at = @At(value = "HEAD"), remap = true)
     public void onActionPerformed(GuiButton btn, CallbackInfo ci) {
-        if (getOriginalGui() != null) return;
+        if (getOriginalGui() != null && getOriginalGui() != GuiBridge.GUI_WIRELESS_TERM) return;
         if (btn == this.originalGuiBtn) {
             if (this.part instanceof WirelessTerminalGuiObject t) {
                 ItemStack tool = t.getItemStack();

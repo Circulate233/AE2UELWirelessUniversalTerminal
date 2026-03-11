@@ -1,16 +1,13 @@
 package com.circulation.ae2wut.mixin.ae2.gui;
 
-import appeng.client.gui.implementations.GuiInterfaceTerminal;
 import appeng.client.gui.implementations.GuiWirelessInterfaceTerminal;
 import appeng.helpers.WirelessTerminalGuiObject;
-import appeng.parts.reporting.PartInterfaceTerminal;
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.TooltipButton;
 import com.circulation.ae2wut.handler.GuiHandler;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,10 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Mixin(GuiWirelessInterfaceTerminal.class)
-public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
+public abstract class MixinGuiWirelessInterfaceTerminal extends MixinGuiInterfaceTerminal {
 
     @Unique
     private TooltipButton wut$t;
@@ -40,10 +38,6 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
     private ItemStack wut$guiItem;
     @Unique
     private WirelessTerminalGuiObject wut$obj;
-
-    public MixinGuiWirelessInterfaceTerminal(InventoryPlayer inventoryPlayer, PartInterfaceTerminal te) {
-        super(inventoryPlayer, te);
-    }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void onInit(InventoryPlayer inventoryPlayer, WirelessTerminalGuiObject obj, CallbackInfo ci) {
@@ -64,10 +58,9 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
         return out;
     }
 
-    @Intrinsic
+    @Unique
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+    public void wut$addB(int mouseX, int mouseY, float partialTicks) {
         if (wut$isWut) {
             if (wut$t == null) {
                 this.wut$Map = GuiHandler.initGui(
@@ -82,7 +75,7 @@ public class MixinGuiWirelessInterfaceTerminal extends GuiInterfaceTerminal {
                 }
                 this.wut$t = this.wut$Map.get((byte) -1);
                 this.wut$Map.remove((byte) -1);
-                this.buttonList = new ObjectArrayList<>(this.buttonList);
+                this.buttonList = new LinkedList<>(this.buttonList);
             } else {
                 this.buttonList.add(this.wut$t);
                 this.wut$t.drawButton(this.mc, mouseX, mouseY, partialTicks);

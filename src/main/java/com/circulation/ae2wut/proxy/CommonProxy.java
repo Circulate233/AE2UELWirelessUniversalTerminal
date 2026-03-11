@@ -28,13 +28,10 @@ public class CommonProxy implements IGuiHandler {
     protected static final Byte2ObjectMap<AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseContainer>> ContainerMap = new Byte2ObjectLinkedOpenHashMap<>();
     private final IntSet allModeSet = new IntOpenHashSet();
 
-    public void construction() {
-
-    }
-
     public void preInit() {
         NetworkRegistry.INSTANCE.registerGuiHandler(AE2UELWirelessUniversalTerminal.MOD_ID, this);
         MinecraftForge.EVENT_BUS.register(new WirelessUniversalTerminalHandler());
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void init() {

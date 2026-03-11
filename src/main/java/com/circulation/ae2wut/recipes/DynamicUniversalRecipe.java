@@ -39,7 +39,9 @@ public class DynamicUniversalRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
 
     private static List<DynamicUniversalRecipe> registerRecipes() {
         List<DynamicUniversalRecipe> RECIPES = new ObjectArrayList<>();
-        itemList.forEach((mode, item) -> RECIPES.add(new DynamicUniversalRecipe(item, mode)));
+        for (var e : itemList.int2ObjectEntrySet()) {
+            RECIPES.add(new DynamicUniversalRecipe(e.getValue(), e.getIntKey()));
+        }
         return RECIPES;
     }
 

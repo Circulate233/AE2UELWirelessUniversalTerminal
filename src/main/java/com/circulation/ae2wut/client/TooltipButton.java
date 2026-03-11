@@ -3,29 +3,30 @@ package com.circulation.ae2wut.client;
 import appeng.client.gui.widgets.ITooltip;
 import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import com.circulation.ae2wut.handler.GuiHandler;
+import com.circulation.ae2wut.utils.AtlasRegion;
+import com.circulation.ae2wut.utils.ComponentAtlas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public final class TooltipButton extends GuiButton implements ITooltip {
+public class TooltipButton extends GuiButton implements ITooltip {
 
     private final byte t;
     private byte nowGui;
 
     public TooltipButton(int x, int y, byte t) {
         super(0, x, y, "");
-        if (t < 0) {
-            this.width = 18;
-            this.height = 20;
-        } else {
-            this.width = 16;
-            this.height = 16;
-        }
+        this.width = 16;
+        this.height = 16;
         this.t = t;
     }
 
@@ -42,12 +43,32 @@ public final class TooltipButton extends GuiButton implements ITooltip {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
             mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
-            this.drawTexturedModalRect(this.x, this.y, 240, 240, 16, 16);
-            this.drawTexturedModalRect(this.x, this.y, ((t < 0 ? nowGui : this.t) - 1) * 16, 0, 16, 16);
+            draw(Integer.MAX_VALUE);
+            draw(t < 0 ? nowGui : this.t);
 
             this.mouseDragged(mc, mouseX, mouseY);
             GlStateManager.popMatrix();
         }
+    }
+
+    protected void draw(int id) {
+        ComponentAtlas atlas = ComponentAtlas.INSTANCE;
+        if (!atlas.isReady()) return;
+
+        atlas.bind();
+        int ax = x;
+        int ay = y;
+        Tessellator tess = Tessellator.getInstance();
+
+        AtlasRegion region = atlas.getRegion(id);
+        if (region == null) return;
+        BufferBuilder buf = tess.getBuffer();
+        buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buf.pos(ax, ay + height, 0).tex(region.u0(), region.v1()).endVertex();
+        buf.pos(ax + width, ay + height, 0).tex(region.u1(), region.v1()).endVertex();
+        buf.pos(ax + width, ay, 0).tex(region.u1(), region.v0()).endVertex();
+        buf.pos(ax, ay, 0).tex(region.u0(), region.v0()).endVertex();
+        tess.draw();
     }
 
     public String getMessage() {

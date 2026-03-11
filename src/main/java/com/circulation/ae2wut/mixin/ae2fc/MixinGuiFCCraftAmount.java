@@ -4,6 +4,7 @@ import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.implementations.GuiCraftAmount;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.container.AEBaseContainer;
+import appeng.core.sync.GuiBridge;
 import appeng.helpers.WirelessTerminalGuiObject;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.mixin.ae2.gui.AccessorGuiCraftAmount;
@@ -33,7 +34,7 @@ public abstract class MixinGuiFCCraftAmount extends GuiCraftAmount implements Ac
 
     @Inject(method = "initGui", at = @At(value = "TAIL"), cancellable = true, remap = true)
     public void onInitGui(CallbackInfo ci) {
-        if (getOriginalGui() != null) return;
+        if (getOriginalGui() != null && getOriginalGui() != GuiBridge.GUI_WIRELESS_TERM) return;
         Object te = ((AEBaseContainer) this.inventorySlots).getTarget();
         ItemStack icon = ItemStack.EMPTY;
         if (te instanceof WirelessTerminalGuiObject) {

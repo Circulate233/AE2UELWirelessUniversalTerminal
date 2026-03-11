@@ -5,23 +5,24 @@ import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.handler.WirelessUniversalTerminalHandler;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
+import com.circulation.ae2wut.utils.ComponentAtlas;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.Nullable;
 
-public class ClientProxy extends CommonProxy {
+import java.io.File;
 
-    protected static final Byte2ObjectMap<AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseGui>> GuiMap = new Byte2ObjectOpenHashMap<>();
+public final class ClientProxy extends CommonProxy {
 
-    @Override
-    public void construction() {
-        super.construction();
-    }
+    private static final Byte2ObjectMap<AE2UELWirelessUniversalTerminal.GetGui<? extends AEBaseGui>> GuiMap = new Byte2ObjectOpenHashMap<>();
 
     @Override
     public void preInit() {
@@ -38,6 +39,23 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit() {
         super.postInit();
+        ComponentAtlas.INSTANCE.startAsync(new File(Loader.instance().getConfigDir(), AE2UELWirelessUniversalTerminal.MOD_ID));
+    }
+
+    @SubscribeEvent
+    public void onTextureReloadPre(TextureStitchEvent.Pre event) {
+        ComponentAtlas.INSTANCE.dispose();
+    }
+
+    @SubscribeEvent
+    public void onTextureReloadPost(TextureStitchEvent.Post event) {
+        ComponentAtlas.INSTANCE.restart();
+    }
+
+    @SubscribeEvent
+    public void onGuiInit(GuiScreenEvent.InitGuiEvent.Pre event) {
+        if (!(event.getGui() instanceof AEBaseGui)) return;
+        ComponentAtlas.INSTANCE.awaitReady();
     }
 
     @Override

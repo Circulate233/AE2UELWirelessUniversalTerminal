@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static com.circulation.ae2wut.handler.WutRegisterHandler.isClassPresent;
@@ -38,6 +39,11 @@ public class AllWUTRecipe {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setIntArray("modes", itemList.keySet().toIntArray());
         return nbt;
+    }
+
+    public static void addIngredient(final int id, @Nonnull final ItemStack itemStack) {
+        if (itemStack.isEmpty()) return;
+        itemList.put(id, itemStack);
     }
 
     private static Int2ObjectMap<ItemStack> getIngredient() {

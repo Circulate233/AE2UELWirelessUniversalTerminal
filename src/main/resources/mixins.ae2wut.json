@@ -8,6 +8,7 @@
     "gui.AccessorGuiCraftAmount",
     "gui.AccessorGuiCraftConfirm",
     "gui.AccessorGuiCraftingStatus",
+    "gui.MixinGuiInterfaceTerminal",
     "gui.MixinGuiMEMonitorable",
     "gui.MixinGuiWirelessFluidTerminal",
     "gui.MixinGuiWirelessInterfaceTerminal"
