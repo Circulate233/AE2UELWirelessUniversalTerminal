@@ -10,17 +10,20 @@ import com.circulation.ae2wut.handler.WirelessUniversalTerminalHandler;
 import com.circulation.ae2wut.handler.WutRegisterHandler;
 import com.circulation.ae2wut.item.ItemWirelessUniversalTerminal;
 import com.circulation.ae2wut.recipes.AllWUTRecipe;
+import com.circulation.ae2wut.recipes.DynamicUniversalRecipe;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.Nullable;
 
 public class CommonProxy implements IGuiHandler {
@@ -41,6 +44,7 @@ public class CommonProxy implements IGuiHandler {
 
     public void postInit() {
         AllWUTRecipe.reciperRegister();
+        GameRegistry.findRegistry(IRecipe.class).registerAll(DynamicUniversalRecipe.RECIPES.toArray(new DynamicUniversalRecipe[0]));
         Upgrades.MAGNET.registerItem(new ItemStack(ItemWirelessUniversalTerminal.INSTANCE), 1);
     }
 
