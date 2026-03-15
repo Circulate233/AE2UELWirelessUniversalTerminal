@@ -3,6 +3,7 @@ package com.circulation.ae2wut.client;
 import appeng.client.gui.widgets.ITooltip;
 import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
 import com.circulation.ae2wut.handler.GuiHandler;
+import com.circulation.ae2wut.recipes.AllWUTRecipe;
 import com.circulation.ae2wut.utils.AtlasRegion;
 import com.circulation.ae2wut.utils.ComponentAtlas;
 import net.minecraft.client.Minecraft;
@@ -43,15 +44,15 @@ public class TooltipButton extends GuiButton implements ITooltip {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
             mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
-            draw(Integer.MAX_VALUE);
-            draw(t < 0 ? nowGui : this.t);
+            draw("button");
+            draw(AllWUTRecipe.itemList.get(t < 0 ? nowGui : this.t).getItem().getRegistryName().getPath());
 
             this.mouseDragged(mc, mouseX, mouseY);
             GlStateManager.popMatrix();
         }
     }
 
-    protected void draw(int id) {
+    protected void draw(String id) {
         ComponentAtlas atlas = ComponentAtlas.INSTANCE;
         if (!atlas.isReady()) return;
 

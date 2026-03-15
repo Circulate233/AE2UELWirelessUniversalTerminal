@@ -19,7 +19,7 @@ public final class AtlasRegion {
     /**
      * Sprite name — the file's base name without extension, e.g. {@code "button_idle"}.
      */
-    public final int name;
+    public final String name;
 
     /**
      * Left edge of the sprite within the atlas, in texels.
@@ -43,7 +43,7 @@ public final class AtlasRegion {
      */
     public final int atlasSize;
 
-    AtlasRegion(int name, int x, int y, int width, int height, int atlasSize) {
+    AtlasRegion(String name, int x, int y, int width, int height, int atlasSize) {
         this.name = name;
         this.x = x;
         this.y = y;

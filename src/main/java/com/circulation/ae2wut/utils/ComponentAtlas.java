@@ -1,10 +1,12 @@
 package com.circulation.ae2wut.utils;
 
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.circulation.ae2wut.recipes.AllWUTRecipe;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,7 +41,7 @@ public final class ComponentAtlas {
     private static final String DOMAIN = AE2UELWirelessUniversalTerminal.MOD_ID;
     private static final int PADDING = 1;
 
-    private final Int2ObjectMap<AtlasRegion> regions = new Int2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<String,AtlasRegion> regions = new Object2ObjectOpenHashMap<>();
 
     private CompletableFuture<StitchResult> future;
     private int glTextureId = 0;
@@ -158,7 +161,7 @@ public final class ComponentAtlas {
     private static String computeHash(List<SpriteData> sortedSprites) {
         CRC32 crc = new CRC32();
         for (SpriteData s : sortedSprites) {
-            crc.update(s.name);
+            crc.update(s.name.getBytes(StandardCharsets.UTF_8));
             int w = s.image.getWidth();
             int h = s.image.getHeight();
             int[] pixels = new int[w * h];
@@ -181,7 +184,7 @@ public final class ComponentAtlas {
         }
 
         Minecraft mc = Minecraft.getMinecraft();
-        int[] names = AE2UELWirelessUniversalTerminal.proxy.getAllMode();
+        var items = AllWUTRecipe.itemList.values();
 
         List<RawSprite> rawSprites = new ObjectArrayList<>();
 
@@ -192,12 +195,13 @@ public final class ComponentAtlas {
                 byte[] chunk = new byte[8192];
                 int n;
                 while ((n = is.read(chunk)) != -1) baos.write(chunk, 0, n);
-                rawSprites.add(new RawSprite(Integer.MAX_VALUE, baos.toByteArray()));
+                rawSprites.add(new RawSprite("button", baos.toByteArray()));
             } catch (Exception ignored) {
             }
         }
 
-        for (int name : names) {
+        for (ItemStack i : items) {
+            var name = i.getItem().getRegistryName().getPath();
             ResourceLocation loc = new ResourceLocation(DOMAIN, COMPONENT_DIR + name + ".png");
             try (InputStream is = mc.getResourceManager().getResource(loc).getInputStream()) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -293,7 +297,7 @@ public final class ComponentAtlas {
     }
 
     @Nullable
-    public AtlasRegion getRegion(int name) {
+    public AtlasRegion getRegion(String name) {
         return regions.get(name);
     }
 
@@ -307,10 +311,10 @@ public final class ComponentAtlas {
     }
 
     private static final class RawSprite {
-        final int name;
+        final String name;
         final byte[] bytes;
 
-        RawSprite(int name, byte[] bytes) {
+        RawSprite(String name, byte[] bytes) {
             this.name = name;
             this.bytes = bytes;
         }
@@ -320,10 +324,10 @@ public final class ComponentAtlas {
      * Decoded sprite image ready for stitching.
      */
     private static final class SpriteData {
-        final int name;
+        final String name;
         final BufferedImage image;
 
-        SpriteData(int name, BufferedImage image) {
+        SpriteData(String name, BufferedImage image) {
             this.name = name;
             this.image = image;
         }
