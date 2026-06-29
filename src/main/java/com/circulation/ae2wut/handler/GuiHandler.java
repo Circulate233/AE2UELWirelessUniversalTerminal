@@ -2,6 +2,7 @@ package com.circulation.ae2wut.handler;
 
 import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.TooltipButton;
+import com.circulation.ae2wut.recipes.AllWUTRecipe;
 import com.mojang.realmsclient.util.Pair;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
@@ -30,6 +31,7 @@ public class GuiHandler {
         var modes = modeSet.toIntArray();
         for (byte i = 0; i < modes.length; i++) {
             final byte mode = (byte) modes[i];
+            if (!AllWUTRecipe.itemList.containsKey(mode)) continue;
             final var btn = new TooltipButton(left - ((i / 4) * 22) - 30, top + ((i % 4) * 22) + 20, mode);
             btn.visible = false;
             map.put(mode, btn);

@@ -65,6 +65,8 @@ public class AllWUTRecipe {
             addAE2Exttable(map);
         }
 
+        map.defaultReturnValue(ItemStack.EMPTY);
+
         return map;
     }
 

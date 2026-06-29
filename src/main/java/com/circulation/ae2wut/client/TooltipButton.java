@@ -45,7 +45,8 @@ public class TooltipButton extends GuiButton implements ITooltip {
 
             mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
             draw("button");
-            draw(AllWUTRecipe.itemList.get(t < 0 ? nowGui : this.t).getItem().getRegistryName().getPath());
+            var i = AllWUTRecipe.itemList.get(t < 0 ? nowGui : this.t);
+            if (i != null) draw(i.getItem().getRegistryName().getPath());
 
             this.mouseDragged(mc, mouseX, mouseY);
             GlStateManager.popMatrix();
