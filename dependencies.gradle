@@ -1,0 +1,17 @@
+apply from: 'gradle/scripts/helpers.gradle'
+
+dependencies {
+    // Include StripLatestForgeRequirements by default for the dev env, saves everyone a hassle
+    runtimeOnly 'com.cleanroommc:strip-latest-forge-requirements:1.0'
+    // Include OSXNarratorBlocker by default for the dev env, for M1+ Macs
+    runtimeOnly 'com.cleanroommc:osxnarratorblocker:1.0'
+
+    implementation(rfg.deobf("curse.maven:had-enough-items-557549:6963093"))
+    implementation(rfg.deobf("curse.maven:baubles-227083:2518667"))
+    implementation(rfg.deobf("curse.maven:ae2-extended-life-570458:6302098"))
+    implementation(rfg.deobf("curse.maven:mek-268560:2835175"))
+    implementation(rfg.deobf("curse.maven:MekanismEnergistics-1027681:5775101"))
+    implementation(rfg.deobf("curse.maven:extended-crafting-nomifactory-edition-398267:5778512"))
+    compileOnly(rfg.deobf("curse.maven:extended-crafting-terminals-for-applied-1157825:6895322"))
+    implementation(rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5751930"))
+}

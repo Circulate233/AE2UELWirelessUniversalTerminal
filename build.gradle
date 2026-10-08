@@ -1,19 +1,17 @@
 /**
  * It is advised that you do not edit anything in the build.gradle; unless you are sure of what you are doing
  */
+//file:noinspection SpellCheckingInspection
 import com.gtnewhorizons.retrofuturagradle.mcp.InjectTagsTask
 import org.jetbrains.changelog.Changelog
-import org.jetbrains.gradle.ext.Gradle
 
 plugins {
     id 'java'
     id 'java-library'
-    id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.1'
-    id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
-    id 'com.modrinth.minotaur' version '2.+' apply false
+    id 'com.gtnewhorizons.retrofuturagradle' version '2.0.2'
     id 'org.jetbrains.changelog' version '2.2.1'
+    id("net.minecraftforge.accesstransformers") version "5.0.3"
 }
 
 apply from: 'gradle/scripts/helpers.gradle'
@@ -26,7 +24,7 @@ assertProperty 'mod_name'
 
 assertSubProperties 'use_tags', 'tag_class_name'
 assertSubProperties 'use_access_transformer', 'access_transformer_locations'
-assertSubProperties 'use_mixins', 'mixin_booter_version', 'mixin_refmap'
+assertSubProperties 'use_mixins', 'mixin_booter_version', 'mixin_refmap', 'use_mixins_debugClassLoading'
 assertSubProperties 'is_coremod', 'coremod_includes_mod', 'coremod_plugin_class_name'
 assertSubProperties 'use_asset_mover', 'asset_mover_version'
 
@@ -85,7 +83,7 @@ tasks.compileTestJava.configure {
 
 configurations {
     embed
-    implementation.extendsFrom(embed)
+    compileOnly.extendsFrom(embed)
 }
 
 minecraft {
@@ -107,6 +105,10 @@ minecraft {
         args << '-Dmixin.hotSwap=true'
         args << '-Dmixin.checks.interfaces=true'
         args << '-Dmixin.debug.export=true'
+         if (propertyBool('use_mixins_debugClassLoading')) {
+            args << '-Dlegacy.debugClassLoading=true'
+            args << '-Dlegacy.debugClassLoadingSave=true'
+        }
     }
     extraRunJvmArguments.addAll(args)
     extraRunJvmArguments.addAll(propertyStringList('extra_jvm_args'))
@@ -123,44 +125,6 @@ minecraft {
 
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << "-Xdoclint:none"
-}
-
-repositories {
-    flatDir {
-        dirs("lib")
-    }
-    maven {
-        url = uri("https://maven.aliyun.com/nexus/content/groups/public/")
-    }
-    maven {
-        url = uri("https://maven.aliyun.com/nexus/content/repositories/jcenter")
-    }
-    maven {
-        url = uri("https://maven.cleanroommc.com")
-    }
-    maven {
-        url = uri("https://cfa2.cursemaven.com")
-    }
-    maven {
-        url = uri("https://cursemaven.com")
-    }
-    maven {
-        url = uri("https://maven.blamejared.com/")
-    }
-    maven {
-        url = uri("https://repo.spongepowered.org/maven")
-    }
-    maven {
-        name = "GeckoLib"
-        url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-    }
-    maven {
-        name = "OvermindDL1 Maven"
-        url = uri("https://gregtech.overminddl1.com/")
-        mavenContent {
-            excludeGroup("net.minecraftforge") // missing the `universal` artefact
-        }
-    }
 }
 
 dependencies {
@@ -202,18 +166,10 @@ dependencies {
     annotationProcessor("org.jetbrains:annotations:24.1.0")
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
-
-    implementation(rfg.deobf("curse.maven:had-enough-items-557549:6963093"))
-    implementation(rfg.deobf("curse.maven:baubles-227083:2518667"))
-    implementation(rfg.deobf("curse.maven:ae2-extended-life-570458:6302098"))
-    implementation(rfg.deobf("curse.maven:mek-268560:2835175"))
-    implementation(rfg.deobf("curse.maven:MekanismEnergistics-1027681:5775101"))
-    implementation(rfg.deobf("curse.maven:extended-crafting-nomifactory-edition-398267:5778512"))
-    compileOnly(rfg.deobf("curse.maven:extended-crafting-terminals-for-applied-1157825:6895322"))
-    implementation(rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5751930"))
 }
 
-apply from: 'gradle/scripts/dependencies.gradle'
+apply from: 'repositories.gradle'
+apply from: 'dependencies.gradle'
 
 // Adds Access Transformer files to tasks
 if (propertyBool('use_access_transformer')) {
@@ -290,41 +246,6 @@ jar {
     from(provider{ configurations.embed.collect {it.isDirectory() ? it : zipTree(it)} })
 }
 
-idea {
-    module {
-        inheritOutputDirs = true
-    }
-    project {
-        settings {
-            runConfigurations {
-                "1. Run Client"(Gradle) {
-                    taskNames = ["runClient"]
-                }
-                "2. Run Server"(Gradle) {
-                    taskNames = ["runServer"]
-                }
-                "3. Run Obfuscated Client"(Gradle) {
-                    taskNames = ["runObfClient"]
-                }
-                "4. Run Obfuscated Server"(Gradle) {
-                    taskNames = ["runObfServer"]
-                }
-                '5. Build Jars'(Gradle) {
-                    taskNames = ['build']
-                }
-            }
-            compiler.javac {
-                afterEvaluate {
-                    javacAdditionalOptions = "-encoding utf8"
-                    moduleJavacAdditionalOptions = [
-                            (project.name + ".main"): tasks.compileJava.options.compilerArgs.collect { '"' + it + '"' }.join(' ')
-                    ]
-                }
-            }
-        }
-    }
-}
-
 compileTestJava {
     sourceCompatibility = targetCompatibility = 8
 }
@@ -393,7 +314,7 @@ tasks.register('cleanroomAfterSync') {
 
 if (propertyBool('use_modern_java_syntax')) {
     tasks.withType(Javadoc).configureEach {
-        sourceCompatibility = 17
+        options.addStringOption('source', '17')
     }
 }
 
@@ -425,5 +346,5 @@ idea.project.settings {
     }
 }
 
-apply from: 'gradle/scripts/publishing.gradle'
 apply from: 'gradle/scripts/extra.gradle'
+apply from: 'gradle/scripts/curseforge.gradle'

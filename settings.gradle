@@ -15,9 +15,18 @@ pluginManagement {
     }
 }
 
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'net.darkhax.curseforgegradle:CurseForgeGradle:1.3.33'
+    }
+}
+
 plugins {
     // Automatic toolchain provisioning
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 // Due to an IntelliJ bug, this has to be done
