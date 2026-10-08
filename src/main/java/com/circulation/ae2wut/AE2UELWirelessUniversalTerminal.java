@@ -15,12 +15,10 @@ import com.circulation.ae2wut.network.UpdateItemModeMessage;
 import com.circulation.ae2wut.network.WirelessTerminalRefresh;
 import com.circulation.ae2wut.proxy.ClientProxy;
 import com.circulation.ae2wut.proxy.CommonProxy;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.LogWrapper;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -58,17 +56,7 @@ public class AE2UELWirelessUniversalTerminal {
 
     @SideOnly(Side.CLIENT)
     public static void openWirelessTerminalGui(WirelessTerminalGuiObject obj, byte mode) {
-        ItemStack stack = ItemStack.EMPTY;
-        if (!obj.isBaubleSlot()) {
-            stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(obj.getInventorySlot());
-        } else if (Loader.isModLoaded("baubles") && obj.isBaubleSlot()) {
-            stack = getBaubleItem(Minecraft.getMinecraft().player, obj.getInventorySlot());
-        }
-        if (!stack.isEmpty()) {
-            ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(stack);
-            ItemWirelessUniversalTerminal.INSTANCE.nbtChange(stack, mode);
-            NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
-        }
+        NET_CHANNEL.sendToServer(new OpenWUTGui(obj, mode));
     }
 
     @Optional.Method(modid = "baubles")
@@ -78,6 +66,9 @@ public class AE2UELWirelessUniversalTerminal {
 
     public static void openWirelessTerminalGui(ItemStack terminal, EntityPlayer player, int mode, int slot, boolean isBauble) {
         if (player instanceof EntityPlayerMP playerMP) {
+            if (!ItemWirelessUniversalTerminal.INSTANCE.hasMode(terminal, (byte) mode)) {
+                return;
+            }
             IWirelessTermRegistry registry = AEApi.instance().registries().wireless();
             if (!registry.isWirelessTerminal(terminal)) {
                 player.sendMessage(PlayerMessages.DeviceNotWirelessTerminal.get());
@@ -96,6 +87,7 @@ public class AE2UELWirelessUniversalTerminal {
                             playerMP.getServer().addScheduledTask(() -> {
                                 ItemWirelessUniversalTerminal.INSTANCE.nbtChangeB(terminal);
                                 ItemWirelessUniversalTerminal.INSTANCE.nbtChange(terminal, (byte) mode);
+                                NET_CHANNEL.sendTo(new UpdateItemModeMessage(slot, mode, isBauble), playerMP);
                                 player.openGui(AE2UELWirelessUniversalTerminal.instance, mode, player.world, slot, isBauble ? 1 : 0, Integer.MIN_VALUE);
                             });
                         } else {

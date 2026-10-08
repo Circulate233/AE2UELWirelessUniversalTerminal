@@ -2,7 +2,6 @@ package com.circulation.ae2wut.client;
 
 import appeng.client.gui.widgets.ITooltip;
 import com.circulation.ae2wut.client.model.ItemWUTBakedModel;
-import com.circulation.ae2wut.handler.GuiHandler;
 import com.circulation.ae2wut.recipes.AllWUTRecipe;
 import com.circulation.ae2wut.utils.AtlasRegion;
 import com.circulation.ae2wut.utils.ComponentAtlas;
@@ -43,10 +42,13 @@ public class TooltipButton extends GuiButton implements ITooltip {
             GlStateManager.pushMatrix();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            mc.renderEngine.bindTexture(GuiHandler.wut$guiRl);
+            // The atlas is not a texture the owning GUI knows about, so put back the binding we found
+            // or the rest of the frame would be drawn with the button atlas.
+            int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
             draw("button");
             var i = AllWUTRecipe.itemList.get(t < 0 ? nowGui : this.t);
             if (i != null) draw(i.getItem().getRegistryName().getPath());
+            GlStateManager.bindTexture(previousTexture);
 
             this.mouseDragged(mc, mouseX, mouseY);
             GlStateManager.popMatrix();
@@ -57,13 +59,14 @@ public class TooltipButton extends GuiButton implements ITooltip {
         ComponentAtlas atlas = ComponentAtlas.INSTANCE;
         if (!atlas.isReady()) return;
 
+        AtlasRegion region = atlas.getRegion(id);
+        if (region == null) return;
+
         atlas.bind();
         int ax = x;
         int ay = y;
         Tessellator tess = Tessellator.getInstance();
 
-        AtlasRegion region = atlas.getRegion(id);
-        if (region == null) return;
         BufferBuilder buf = tess.getBuffer();
         buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         buf.pos(ax, ay + height, 0).tex(region.u0(), region.v1()).endVertex();

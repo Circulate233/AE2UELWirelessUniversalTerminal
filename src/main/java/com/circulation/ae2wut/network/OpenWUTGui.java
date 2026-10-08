@@ -46,6 +46,7 @@ public class OpenWUTGui implements IMessage, IMessageHandler<OpenWUTGui, IMessag
     public IMessage onMessage(OpenWUTGui message, MessageContext ctx) {
         final ItemStack terminal;
         var player = ctx.getServerHandler().player;
+        if (message.slot < 0) return null;
         if (!message.isBauble) {
             terminal = player.inventory.getStackInSlot(message.slot);
         } else if (Loader.isModLoaded("baubles") && message.isBauble) {
@@ -64,6 +65,7 @@ public class OpenWUTGui implements IMessage, IMessageHandler<OpenWUTGui, IMessag
 
     @Optional.Method(modid = "baubles")
     protected ItemStack getBaubleItem(EntityPlayer player, int slot) {
-        return BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
+        var handler = BaublesApi.getBaublesHandler(player);
+        return slot < handler.getSlots() ? handler.getStackInSlot(slot) : ItemStack.EMPTY;
     }
 }

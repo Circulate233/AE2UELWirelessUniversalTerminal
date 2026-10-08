@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -139,15 +140,16 @@ public final class ComponentAtlas {
         }
         buf.flip();
 
+        int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
         int texId = GL11.glGenTextures();
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+        GlStateManager.bindTexture(texId);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height,
             0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        GlStateManager.bindTexture(previousTexture);
 
         return texId;
     }
@@ -288,7 +290,9 @@ public final class ComponentAtlas {
 
     public void bind() {
         if (glTextureId != 0) {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, glTextureId);
+            // Must go through GlStateManager: it caches the bound texture and skips the GL call when
+            // the id matches, so binding behind its back would leave the cache lying about what is bound.
+            GlStateManager.bindTexture(glTextureId);
         }
     }
 
@@ -303,6 +307,11 @@ public final class ComponentAtlas {
 
     public void dispose() {
         if (glTextureId != 0) {
+            if (GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D) == glTextureId) {
+                // Deleting the bound texture unbinds it behind GlStateManager's back, and the id may be
+                // handed out again, so clear the tracked binding instead of leaving it stale.
+                GlStateManager.bindTexture(0);
+            }
             GL11.glDeleteTextures(glTextureId);
             glTextureId = 0;
         }

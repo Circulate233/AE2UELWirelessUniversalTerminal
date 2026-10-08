@@ -151,19 +151,18 @@ public class ItemWirelessUniversalTerminal extends ToolWirelessTerminal {
     }
 
     public void nbtChange(ItemStack item, byte mode) {
+        if (!hasMode(item, mode)) return;
         final var tag = Platform.openNbtData(item);
         tag.setByte("mode", mode);
         if (secure.contains(mode)) return;
         tag.setInteger("craft", 1);
-        if (hasMode(item, mode)) {
-            NBTTagList cache = tag.getCompoundTag("cache").getTagList(String.valueOf(mode), Constants.NBT.TAG_COMPOUND);
-            if (cache.tagCount() != 0) {
-                switch (mode) {
-                    case 1, 3, 4 -> tag.getCompoundTag("craftingGrid").setTag("Items", cache);
-                    case 6, 7, 8, 9 -> tag.setTag("crafting", cache);
-                }
-                tag.getCompoundTag("cache").removeTag(String.valueOf(mode));
+        NBTTagList cache = tag.getCompoundTag("cache").getTagList(String.valueOf(mode), Constants.NBT.TAG_COMPOUND);
+        if (cache.tagCount() != 0) {
+            switch (mode) {
+                case 1, 3, 4 -> tag.getCompoundTag("craftingGrid").setTag("Items", cache);
+                case 6, 7, 8, 9 -> tag.setTag("crafting", cache);
             }
+            tag.getCompoundTag("cache").removeTag(String.valueOf(mode));
         }
     }
 

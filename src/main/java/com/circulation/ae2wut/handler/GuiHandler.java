@@ -1,6 +1,5 @@
 package com.circulation.ae2wut.handler;
 
-import com.circulation.ae2wut.AE2UELWirelessUniversalTerminal;
 import com.circulation.ae2wut.client.TooltipButton;
 import com.circulation.ae2wut.recipes.AllWUTRecipe;
 import com.mojang.realmsclient.util.Pair;
@@ -10,14 +9,12 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Map;
 
 public class GuiHandler {
-    public static final ResourceLocation wut$guiRl = new ResourceLocation(AE2UELWirelessUniversalTerminal.MOD_ID, "textures/gui/control.png");
     private static Pair<Map<?, ?>, List<Rectangle>> rectanglePair;
 
     public static Byte2ObjectMap<TooltipButton> initGui(int guiTop, int guiLeft, List<GuiButton> buttonList, byte nowGui, ItemStack terminal) {

@@ -73,6 +73,9 @@ public final class ClientProxy extends CommonProxy {
         if (!terminal.isEmpty()) {
             if (terminal.getItem() instanceof ItemWirelessUniversalTerminal wut) {
                 if (wut.hasMode(terminal, mode)) {
+                    // The GUI and its container are picked from this local NBT, so mirror the mode the
+                    // server opened before constructing anything.
+                    terminal.getTagCompound().setByte("mode", mode);
                     return GuiMap.get(mode).get(terminal, player, x, y);
                 }
             }

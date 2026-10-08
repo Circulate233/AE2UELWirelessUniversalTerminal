@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -85,8 +86,11 @@ public class WirelessUniversalTerminalHandler {
                     newVal = 0;
                 }
 
-                tag.setInteger("mode", modes[newVal]);
-                mc.player.sendStatusMessage(new TextComponentString(stack.getDisplayName()), true);
+                String baseName = stack.hasDisplayName()
+                    ? stack.getDisplayName()
+                    : I18n.format(stack.getItem().getTranslationKey(stack) + ".name").trim();
+                mc.player.sendStatusMessage(
+                    new TextComponentString((baseName + ItemWirelessUniversalTerminal.getWirelessName(modes[newVal])).trim()), true);
                 AE2UELWirelessUniversalTerminal.NET_CHANNEL.sendToServer(new UpdateItemModeMessage(mc.player.inventory.currentItem, modes[newVal], false));
 
                 event.setCanceled(true);
